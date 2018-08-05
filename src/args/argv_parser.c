@@ -18,7 +18,7 @@
  *
  * If no delimiter is found, returns ANQ_ERR_NO_DELIMITER,
  * otherwise 0, even if sb ends being NULL. */
-int argv_slice(char *argv, char del, char *sa, char *sb);
+ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb);
 /* Grab the argument sliced (e.g. arga = "-d", argb = "~/home")
  * and check if it coincide with one of our record. */
 void argv_check_argument(char *arga, char *argb, int err);
@@ -63,7 +63,7 @@ void argv_check_argument(char *arga, char *argb, int err)
 	}
 }
 
-int argv_slice(char *argv, char del, char *sa, char *sb)
+ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb)
 {
 	int  i = 0;
 	bool found = false;
@@ -92,5 +92,5 @@ int argv_slice(char *argv, char del, char *sa, char *sb)
 	}
 	sb[n + 1] = '\0';
 
-	return 0;
+	return ANQ_OK;
 }

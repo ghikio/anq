@@ -8,6 +8,10 @@
 #ifndef ANQ_ERR_CODES_HH
 #define ANQ_ERR_CODES_HH
 
+#define ANQ_OK 0
+
+typedef int ANQ_ERR;
+
 enum s_exit_err_codes {
 	/* command line argument -e or -d has been parsed
 	 * without giving the subsequent service filename. */

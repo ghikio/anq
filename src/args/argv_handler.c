@@ -18,7 +18,7 @@
 
 struct s_argv_handler *ahdl;
 
-int argv_init(void)
+ANQ_ERR argv_init(void)
 {
 	ahdl = malloc(sizeof(struct s_argv_handler));
 
@@ -26,7 +26,7 @@ int argv_init(void)
 		return ANQ_ERR_UNALLOCATED_STRUCT;
 
 	ahdl->argc = 0;
-	return 0;
+	return ANQ_OK;
 }
 
 void argv_exit(void)
@@ -63,7 +63,7 @@ argv_fptr argv_get_fop(int i)
 	return ahdl->fops[i];
 }
 
-int argv_add_parameter(char *arg, bool del, argv_fptr fop)
+ANQ_ERR argv_add_parameter(char *arg, bool del, argv_fptr fop)
 {
 #ifdef DEBUG
 	assert(ahdl->argc < ARGV_SIZE);
@@ -74,6 +74,5 @@ int argv_add_parameter(char *arg, bool del, argv_fptr fop)
 	/* set the callback function for said parameter */
 	ahdl->fops[ahdl->argc] = fop;
 	ahdl->argc++;
-
-	return 0;
+	return ANQ_OK;
 }
