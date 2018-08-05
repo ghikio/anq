@@ -16,10 +16,14 @@
 	#include <assert.h>
 #endif
 
-struct s_argv_handler *ahdl;
+struct s_argv_handler *ahdl = NULL;
 
 ANQ_ERR argv_init(void)
 {
+#ifdef DEBUG
+	/* argv_init shouldn't be called more than once. */
+	assert(!ahdl);
+#endif
 	ahdl = malloc(sizeof(struct s_argv_handler));
 
 	if(!ahdl)
@@ -32,6 +36,7 @@ ANQ_ERR argv_init(void)
 void argv_exit(void)
 {
 	free(ahdl);
+	ahdl = NULL;
 }
 
 char *argv_get_arg(int i)
