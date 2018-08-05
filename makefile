@@ -1,6 +1,6 @@
 CC=clang
 
-CCFLAGS=-std=c11 -g -Wall
+CCFLAGS=-std=c11 -g -Wall -DDEBUG
 LDFLAGS=
 IFLAGS=-Isrc -Isrc/args
 

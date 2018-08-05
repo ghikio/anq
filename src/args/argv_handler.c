@@ -12,6 +12,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef DEBUG
+	#include <assert.h>
+#endif
+
 struct s_argv_handler *ahdl;
 
 int argv_init(void)
@@ -32,15 +36,17 @@ void argv_exit(void)
 
 char *argv_get_arg(int i)
 {
-	if(i >= ARGV_SIZE)
-		return NULL;
+#ifdef DEBUG
+	assert(i < ARGV_SIZE);
+#endif
 	return ahdl->argv[i];
 }
 
 bool argv_get_del(int i)
 {
-	if(i >= ARGV_SIZE)
-		return NULL;
+#ifdef DEBUG
+	assert(i < ARGV_SIZE);
+#endif
 	return ahdl->has_del[i];
 }
 
@@ -51,16 +57,17 @@ short argv_get_argc()
 
 argv_fptr argv_get_fop(int i)
 {
-	if(i >= ARGV_SIZE)
-		return NULL;
+#ifdef DEBUG
+	assert(i < ARGV_SIZE);
+#endif
 	return ahdl->fops[i];
 }
 
 int argv_add_parameter(char *arg, bool del, argv_fptr fop)
 {
-	if(ahdl->argc >= ARGV_SIZE) {
-		return ANQ_ERR_MAX_ARGS_EXCEEDED;
-	}
+#ifdef DEBUG
+	assert(ahdl->argc < ARGV_SIZE);
+#endif
 
 	strncpy(ahdl->argv[ahdl->argc], arg, ARGV_READ_SIZE);
 	ahdl->has_del[ahdl->argc] = del;
