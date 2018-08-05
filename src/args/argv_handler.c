@@ -63,7 +63,7 @@ argv_fptr argv_get_fop(int i)
 	return ahdl->fops[i];
 }
 
-ANQ_ERR argv_add_parameter(char *arg, bool del, argv_fptr fop)
+void argv_add_parameter(char *arg, bool del, argv_fptr fop)
 {
 #ifdef DEBUG
 	assert(ahdl->argc < ARGV_SIZE);
@@ -74,5 +74,4 @@ ANQ_ERR argv_add_parameter(char *arg, bool del, argv_fptr fop)
 	/* set the callback function for said parameter */
 	ahdl->fops[ahdl->argc] = fop;
 	ahdl->argc++;
-	return ANQ_OK;
 }

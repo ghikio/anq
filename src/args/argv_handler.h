@@ -49,6 +49,6 @@ short argv_get_argc();
  * del:		True if the argument has a value, false if not.
  *		(.e.g. false -> -d, true -> -d=something).
  * fop:		The argument callback function. */
-ANQ_ERR argv_add_parameter(char *arg, bool del, argv_fptr fop);
+void argv_add_parameter(char *arg, bool del, argv_fptr fop);
 
 #endif
