@@ -26,11 +26,11 @@ The structure:
 
 The above structure must be initialized before any usage with:
 	
-	int  argv_init(void);
+	ANQ_ERR argv_init(void);
 
 	return:
 
-	* Return 0 on success.
+	* Return ANQ_OK on success.
 	* Return ANQ_ERR_UNALLOCATED_STRUCT if malloc fails.
 
 
@@ -41,29 +41,21 @@ And freed when there is no need of it with:
 
 And new arguments should be added using argv_add_argument function:
 
-	argv_add_parameter(char *arg,
-			   char *desc,
-			   bool del,
-			   argv_fptr fop);
+	void argv_add_parameter(char *arg,
+				bool del,
+				argv_fptr fop);
 
 	parameters:
 
 	* parameter:	The new argument. (e.g. -d)
-	* description:	A description of the parameter.
 	* del:		True if the argument has a value, false if not.
 	*		(.e.g. false -> -d, true -> -d=something).
 	* fop:		The argument callback function. */
 
-
-	return:
-
-	* Return 0 on success.
-	* Return ANQ_ERR_MAX_ARGS_EXCEEDED if argc is bigger than ARGV_SIZE.
-
 	e.g.
 
-	argv_add_parameter("-d", "Decrypt Service", true,  decrypt_function);
-	argv_add_parameter("-e", "Encrypt Service", false, encrypt_function);
+	argv_add_parameter("-d", true,  decrypt_function);
+	argv_add_parameter("-e", false, encrypt_function);
 
 
 Finally argv_parse from "argv_parser.h" should be called when everything 
