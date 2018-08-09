@@ -23,7 +23,7 @@ ANQ_ERR argv_init(void)
 	ahdl = malloc(sizeof(struct s_argv_handler));
 
 	if(!ahdl)
-		return ANQ_ERR_UNALLOCATED_STRUCT;
+		return ANQ_ERR_UNALLOCATED_MEMORY;
 
 	ahdl->argc = 0;
 	return ANQ_OK;

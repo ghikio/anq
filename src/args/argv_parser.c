@@ -21,46 +21,63 @@
 ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb);
 /* Grab the argument sliced (e.g. arga = "-d", argb = "~/home")
  * and check if it coincide with one of our record. */
-void argv_check_argument(char *arga, char *argb, int err);
+ANQ_ERR argv_check_argument(char *arga, char *argb, int err);
 
 /* Check each argument for a defined one in argv_handler and if found
  * call it's callback. */
-void argv_parse(int argc, char *argv[])
+ANQ_ERR argv_parse(int argc, char *argv[])
 {
-	int  err;
+	int  err = 0;
 	char *arga = malloc(sizeof(char) * ARGV_READ_SIZE + 1);
+
+	if(!arga) {
+		err = ANQ_ERR_UNALLOCATED_MEMORY;
+		goto arga_err;
+	}
+
 	char *argb = malloc(sizeof(char) * ARGV_READ_SIZE + 1);
+
+	if(!argb) {
+		err = ANQ_ERR_UNALLOCATED_MEMORY;
+		goto argb_err;
+	}
 
 	/* Start at 1 so we don't parse the program name. */
 	for(int i = 1; i < argc; i++) {
 		err = argv_slice(argv[i], '=', arga, argb);
-		argv_check_argument(arga, argb, err);
+		err = argv_check_argument(arga, argb, err);
+
+		if(err == ANQ_ERR_NO_DELIMITER)
+			goto del_err;
 	}
 
-	free(arga);
+del_err:
 	free(argb);
+argb_err:
+	free(arga);
+arga_err:
+
+	return err;
 }
 
 /* TODO(criw)(low-priority) I feel like we should optimize this
  * function arguments. */
-void argv_check_argument(char *arga, char *argb, int err)
+ANQ_ERR argv_check_argument(char *arga, char *argb, int err)
 {
 	short acnt = argv_get_argc();
 	for(short x = 0; x < acnt; x++) {
 		if(strncmp(argv_get_arg(x), arga, ARGV_READ_SIZE) == 0) {
 			/* Check if the argument must have a delimiter. */
 			if(err == ANQ_ERR_NO_DELIMITER && argv_get_del(x))
-				/* TODO(criw)(high-priority) at this point
-				 * if exit is executed, memory isn't freed
-				 * correctly. Should find a way to handle
-				 * errors better. */
-				exit(err);
+				return ANQ_ERR_NO_DELIMITER;
 
 			/* Get the callback pointer and calls it. */
 			argv_fptr fop = argv_get_fop(x);
 			(*fop)(arga, argb);
 		}
 	}
+
+	return ANQ_OK;
 }
 
 ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb)

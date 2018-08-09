@@ -21,7 +21,7 @@ enum anq_err_codes {
 	
 	/* Returned if a malloc() or similar hasn't been able to
 	 * allocate memory */
-	ANQ_ERR_UNALLOCATED_STRUCT = -100,
+	ANQ_ERR_UNALLOCATED_MEMORY = -100,
 };
 
 #endif

@@ -14,6 +14,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+void main_init(int argc, char *argv[]);
+void main_exit();
+
 void decrypt_function(char *arga, char *argb)
 {
 	printf("testing function %s=%s\n", arga, argb);
@@ -26,7 +29,7 @@ void encrypt_function(char *arga, char *argb)
 
 void main_init(int argc, char *argv[])
 {
-	int err;
+	int err = 0;
 
 	err = argv_init();
 	if(err)
@@ -36,7 +39,13 @@ void main_init(int argc, char *argv[])
 	argv_add_parameter("-d", true, decrypt_function);
 	argv_add_parameter("-e", true, encrypt_function);
 
-	argv_parse(argc, argv);
+	err = argv_parse(argc, argv);
+
+	if(err == ANQ_ERR_UNALLOCATED_MEMORY ||
+	   err == ANQ_ERR_NO_DELIMITER) {
+		main_exit();
+		exit(err);
+	}
 }
 
 void main_exit()
