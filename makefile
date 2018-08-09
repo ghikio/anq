@@ -1,8 +1,12 @@
 CC=clang
 
-CCFLAGS=-std=c11 -g -Wall -DDEBUG
+CCFLAGS=-std=c11 -g -Wall
 LDFLAGS=
 IFLAGS=-Isrc -Isrc/args
+DEFINES=
+
+#DEFINES=-DNDEBUG
+CCFLAGS+=$(DEFINES)
 
 BIN_DIR=bin
 SRC_DIR=src

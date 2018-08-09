@@ -11,19 +11,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#ifdef DEBUG
-	#include <assert.h>
-#endif
+#include <assert.h>
 
 struct s_argv_handler *ahdl = NULL;
 
 ANQ_ERR argv_init(void)
 {
-#ifdef DEBUG
 	/* argv_init shouldn't be called more than once. */
 	assert(!ahdl);
-#endif
+
 	ahdl = malloc(sizeof(struct s_argv_handler));
 
 	if(!ahdl)
@@ -41,17 +37,13 @@ void argv_exit(void)
 
 char *argv_get_arg(int i)
 {
-#ifdef DEBUG
 	assert(i < ARGV_SIZE);
-#endif
 	return ahdl->argv[i];
 }
 
 bool argv_get_del(int i)
 {
-#ifdef DEBUG
 	assert(i < ARGV_SIZE);
-#endif
 	return ahdl->has_del[i];
 }
 
@@ -62,17 +54,13 @@ short argv_get_argc()
 
 argv_fptr argv_get_fop(int i)
 {
-#ifdef DEBUG
 	assert(i < ARGV_SIZE);
-#endif
 	return ahdl->fops[i];
 }
 
 void argv_add_parameter(char *arg, bool del, argv_fptr fop)
 {
-#ifdef DEBUG
 	assert(ahdl->argc < ARGV_SIZE);
-#endif
 
 	strncpy(ahdl->argv[ahdl->argc], arg, ARGV_READ_SIZE);
 	ahdl->has_del[ahdl->argc] = del;
