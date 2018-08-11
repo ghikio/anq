@@ -23,6 +23,7 @@ enum anq_err_codes {
 	ANQ_ERR_UNALLOCATED_MEMORY = -100,
 };
 
-char *err_to_message(ANQ_ERR err);
+void  print_err(ANQ_ERR err);
+char *err_to_mess(ANQ_ERR err);
 
 #endif
