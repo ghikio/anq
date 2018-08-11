@@ -11,7 +11,8 @@ CCFLAGS+=$(DEFINES)
 BIN_DIR=bin
 SRC_DIR=src
 
-OBJS=src/main.o
+OBJS=src/main.o \
+     src/err_codes.o
 
 include src/args/make.config
 

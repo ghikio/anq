@@ -29,11 +29,11 @@ void encrypt_function(char *arga, char *argb)
 
 void main_init(int argc, char *argv[])
 {
-	int err = 0;
+	int  err;
 
 	err = argv_init();
 	if(err)
-		exit(ANQ_ERR_ARGV_HANDLER);
+		goto init_err;
 
 	argv_add_parameter("-h", false, anq_help); 
 	argv_add_parameter("-d", true, decrypt_function);
@@ -42,10 +42,16 @@ void main_init(int argc, char *argv[])
 	err = argv_parse(argc, argv);
 
 	if(err == ANQ_ERR_UNALLOCATED_MEMORY ||
-	   err == ANQ_ERR_NO_DELIMITER) {
-		main_exit();
-		exit(err);
-	}
+	   err == ANQ_ERR_NO_DELIMITER)
+		goto pars_err;
+
+	return;
+
+pars_err:
+	main_exit();
+init_err:
+	print_err(err);
+	exit(err);
 }
 
 void main_exit()
