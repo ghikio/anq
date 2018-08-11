@@ -8,13 +8,12 @@
 #ifndef ANQ_ERR_CODES_HH
 #define ANQ_ERR_CODES_HH
 
+#define ANQ_ERR_SIZE 124
+
 typedef int ANQ_ERR;
 
 enum anq_err_codes {
 	ANQ_OK = 0,
-
-	/* Argument handler hasn't been able to start */
-	ANQ_ERR_ARGV_HANDLER = -1,
 
 	/* Given parameter needs a value and it hasn't. */
 	ANQ_ERR_NO_DELIMITER = -2,
@@ -23,5 +22,7 @@ enum anq_err_codes {
 	 * allocate memory */
 	ANQ_ERR_UNALLOCATED_MEMORY = -100,
 };
+
+char *err_to_message(ANQ_ERR err);
 
 #endif
