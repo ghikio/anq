@@ -1,0 +1,25 @@
+TODOS.PL
+
+CREATED: 2018-08-13
+UPDATED: 2018-08-13
+
+AUTHOR: criw <contact@thecriw.com>
+
+Parse a concrete directory's files for "TODO" commentaries
+and print them to STDOUT.
+
+Those TODO must have the next structure in order to be correctly
+parsed:
+
+	TODO [NAME PRIORITY] BRIEF SUBJECT
+
+Where NAME is the name of the writer of the comment.
+Where PRIORITY is one of the following:
+	lp - low priority
+	mp - middle priority
+	hp - high priority
+Where BRIEF SUBJECT is a small introduction to the TODO reason.
+
+NOTE: In this actual version 'todos.pl' only search in *.c / *.h
+files. If this is not the future desired behaviour, change it
+in the &wanted function.

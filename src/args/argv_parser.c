@@ -60,8 +60,7 @@ arga_err:
 	return err;
 }
 
-/* TODO(criw)(low-priority) I feel like we should optimize this
- * function arguments. */
+// TODO [criw lp] I feel like we should optimize this function arguments.
 ANQ_ERR argv_check_argument(char *arga, char *argb, int err)
 {
 	short acnt = argv_get_argc();
