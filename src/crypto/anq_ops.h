@@ -10,9 +10,21 @@
 
 #include "anq_data.h"
 
+/* By now the only implemented crypto lib will be gpgme, but
+ * if in the future a new one is implemented, it would be nice
+ * to switch between implementations with this. Details in 
+ * anq_init_ops(). */
+#define ANQ_CRYPTO_LIB_GPGME 1
+
 struct anq_ops {
-	void (*encrypt) (struct anq_data *);
-	void (*decrypt) (struct anq_data *);
+	int crypto_lib;
+
+	int (*init)    (struct anq_data *);
+	int (*exit)    (struct anq_data *);
+	int (*encrypt) (struct anq_data *);
+	int (*decrypt) (struct anq_data *);
 };
+
+void anq_init_ops();
 
 #endif

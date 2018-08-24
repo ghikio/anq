@@ -17,9 +17,8 @@ enum anq_op {
 
 struct anq_data {
 	enum anq_op op;
-	/* keyquery CAN be null, in which case all the system keys
-	 * will be searched. */
 	char *keyquery;
+	char *plain;
 };
 
 enum anq_op anq_get_operation(struct anq_data *dt);

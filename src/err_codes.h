@@ -21,6 +21,9 @@ enum anq_err_codes {
 	/* Returned if a malloc() or similar hasn't been able to
 	 * allocate memory */
 	ANQ_ERR_UNALLOCATED_MEMORY = -100,
+
+	// Returned for not implemented features.
+	ANQ_ERR_NOT_IMPLEMENTED = 127,
 };
 
 void  print_err(ANQ_ERR err);
