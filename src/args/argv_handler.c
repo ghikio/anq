@@ -13,14 +13,14 @@
 #include <stdbool.h>
 #include <assert.h>
 
-struct s_argv_handler *ahdl = NULL;
+struct anq_argv_handler *ahdl = NULL;
 
-ANQ_ERR argv_init(void)
+int anq_argv_init(void)
 {
 	/* argv_init shouldn't be called more than once. */
 	assert(!ahdl);
 
-	ahdl = malloc(sizeof(struct s_argv_handler));
+	ahdl = malloc(sizeof(struct anq_argv_handler));
 
 	if(!ahdl)
 		return ANQ_ERR_UNALLOCATED_MEMORY;
@@ -29,42 +29,43 @@ ANQ_ERR argv_init(void)
 	return ANQ_OK;
 }
 
-void argv_exit(void)
+void anq_argv_exit(void)
 {
 	free(ahdl);
 	ahdl = NULL;
 }
 
-char *argv_get_arg(int i)
+char *anq_argv_get_arg(int i)
 {
 	assert(i < ARGV_SIZE);
 	return ahdl->argv[i];
 }
 
-bool argv_get_del(int i)
-{
-	assert(i < ARGV_SIZE);
-	return ahdl->has_del[i];
-}
-
-short argv_get_argc()
+short anq_argv_get_argc()
 {
 	return ahdl->argc;
 }
 
-argv_fptr argv_get_fop(int i)
+argv_fp anq_argv_get_fop(int i)
 {
 	assert(i < ARGV_SIZE);
 	return ahdl->fops[i];
 }
 
-void argv_add_parameter(char *arg, bool del, argv_fptr fop)
+int anq_argv_add_parameter(char *arg, argv_fp fp)
 {
+	int err;
+	if(!ahdl) {
+		err = anq_argv_init();
+		if(err)
+			return err;
+	}
+
 	assert(ahdl->argc < ARGV_SIZE);
 
 	strncpy(ahdl->argv[ahdl->argc], arg, ARGV_READ_SIZE);
-	ahdl->has_del[ahdl->argc] = del;
 	/* set the callback function for said parameter */
-	ahdl->fops[ahdl->argc] = fop;
+	ahdl->fops[ahdl->argc] = fp;
 	ahdl->argc++;
+	return ANQ_OK;
 }

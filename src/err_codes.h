@@ -10,8 +10,6 @@
 
 #define ANQ_ERR_SIZE 124
 
-typedef int ANQ_ERR;
-
 enum anq_err_codes {
 	ANQ_OK = 0,
 
@@ -26,7 +24,7 @@ enum anq_err_codes {
 	ANQ_ERR_NOT_IMPLEMENTED = 127,
 };
 
-void  print_err(ANQ_ERR err);
-char *err_to_mess(ANQ_ERR err);
+void  print_err(int err);
+char *err_to_mess(int err);
 
 #endif

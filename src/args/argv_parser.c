@@ -18,24 +18,24 @@
  *
  * If no delimiter is found, returns ANQ_ERR_NO_DELIMITER,
  * otherwise 0, even if sb ends being NULL. */
-ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb);
+void anq_argv_slice(char *argv, char del, char *sa, char *sb);
 /* Grab the argument sliced (e.g. arga = "-d", argb = "~/home")
  * and check if it coincide with one of our record. */
-ANQ_ERR argv_check_argument(char *arga, char *argb, int err);
+int anq_argv_check_argument(char *arga, char *argb);
 
 /* Check each argument for a defined one in argv_handler and if found
  * call it's callback. */
-ANQ_ERR argv_parse(int argc, char *argv[])
+void anq_argv_parse(int argc, char *argv[])
 {
-	int  err = 0;
-	char *arga = malloc(sizeof(char) * ARGV_READ_SIZE + 1);
+	int  err;
+	char *arga = calloc(ARGV_READ_SIZE + 1, sizeof(char));
 
 	if(!arga) {
 		err = ANQ_ERR_UNALLOCATED_MEMORY;
 		goto arga_err;
 	}
 
-	char *argb = malloc(sizeof(char) * ARGV_READ_SIZE + 1);
+	char *argb = calloc(ARGV_READ_SIZE + 1, sizeof(char));
 
 	if(!argb) {
 		err = ANQ_ERR_UNALLOCATED_MEMORY;
@@ -44,8 +44,8 @@ ANQ_ERR argv_parse(int argc, char *argv[])
 
 	/* Start at 1 so we don't parse the program name. */
 	for(int i = 1; i < argc; i++) {
-		err = argv_slice(argv[i], '=', arga, argb);
-		err = argv_check_argument(arga, argb, err);
+		anq_argv_slice(argv[i], '=', arga, argb);
+		err = anq_argv_check_argument(arga, argb);
 
 		if(err == ANQ_ERR_NO_DELIMITER)
 			goto del_err;
@@ -56,30 +56,31 @@ del_err:
 argb_err:
 	free(arga);
 arga_err:
-
-	return err;
+	anq_argv_exit();
+	if(err)
+		exit(err);
 }
 
-// TODO [criw lp] I feel like we should optimize this function arguments.
-ANQ_ERR argv_check_argument(char *arga, char *argb, int err)
+int anq_argv_check_argument(char *arga, char *argb)
 {
-	short acnt = argv_get_argc();
-	for(short x = 0; x < acnt; x++) {
-		if(strncmp(argv_get_arg(x), arga, ARGV_READ_SIZE) == 0) {
-			/* Check if the argument must have a delimiter. */
-			if(err == ANQ_ERR_NO_DELIMITER && argv_get_del(x))
-				return ANQ_ERR_NO_DELIMITER;
+	int err;
 
+	short acnt = anq_argv_get_argc();
+	for(short x = 0; x < acnt; x++) {
+		if(strncmp(anq_argv_get_arg(x), arga, ARGV_READ_SIZE) == 0) {
 			/* Get the callback pointer and calls it. */
-			argv_fptr fop = argv_get_fop(x);
-			(*fop)(arga, argb);
+			argv_fp fop = anq_argv_get_fop(x);
+			err = (*fop)(arga, argb);
+
+			if(err)
+				return ANQ_ERR_NO_DELIMITER;
 		}
 	}
 
 	return ANQ_OK;
 }
 
-ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb)
+void anq_argv_slice(char *argv, char del, char *sa, char *sb)
 {
 	int  i = 0;
 	bool found = false;
@@ -98,7 +99,7 @@ ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb)
 	sa[i] = '\0';
 
 	if(found == false)
-		return ANQ_ERR_NO_DELIMITER;
+		return;
 
 	int n = 0;
 	while(argv[i] != '\0') {
@@ -107,6 +108,4 @@ ANQ_ERR argv_slice(char *argv, char del, char *sa, char *sb)
 		i++;
 	}
 	sb[n + 1] = '\0';
-
-	return ANQ_OK;
 }

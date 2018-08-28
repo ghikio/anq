@@ -10,55 +10,51 @@ arrays with the same index.
 
 The structure:
 
+	/* Type of the pointer which saves the callback function. 
+	 * Note that the program itself doesn't check if the arguments
+	 * are null, is the handler function responsibility to do so.*/
+	typedef int (*argv_fp)(char *, char *);
+
 	* argv    - stores each defined argument.
-	* has_del - stores the possibility of the argument having value. 
 	* fops    - stores the pointer to the argument's callback function. 
 	*
 	* argc    - stores how much arguments have been inserted. */
 	struct s_argv_handler {
 		char argv[ARGV_SIZE][ARGV_READ_SIZE];
-		bool has_del[ARGV_SIZE];
 		argv_fptr fops[ARGV_SIZE];
 
 		short argc;
 	};
 
 
-The above structure must be initialized before any usage with:
-	
-	ANQ_ERR argv_init(void);
-
-	return:
-
-	* Return ANQ_OK on success.
-	* Return ANQ_ERR_UNALLOCATED_STRUCT if malloc fails.
-
-
-And freed when there is no need of it with:
-	
-	void argv_exit(void);
-
-
-And new arguments should be added using argv_add_argument function:
+And new arguments should be added using argv_add_argument function,
+argv_add_parameter will automatically allocate memory for the structure:
 
 	void argv_add_parameter(char *arg,
-				bool del,
 				argv_fptr fop);
 
 	parameters:
 
 	* parameter:	The new argument. (e.g. -d)
-	* del:		True if the argument has a value, false if not.
-	*		(.e.g. false -> -d, true -> -d=something).
 	* fop:		The argument callback function. */
 
 	e.g.
 
-	argv_add_parameter("-d", true,  decrypt_function);
-	argv_add_parameter("-e", false, encrypt_function);
+	argv_add_parameter("-d", decrypt_function);
+	argv_add_parameter("-e", encrypt_function);
 
 
 Finally argv_parse from "argv_parser.h" should be called when everything 
-is setted.
+is setted. 
 
 	void argv_parse(int argc, char *argv[]);
+
+argv_parse will exit the program if an error ocurred, this
+behaviour is explained in main.c:
+
+	/* Since the argv handler is the first thing allocated
+	 * by the program, anq_argv_parse will automatically
+	 * exit if a error happens. In the future if something
+	 * needs to be allocated before the argv handler we'll
+	 * need to change that. */
+	anq_argv_parse(argc, argv);

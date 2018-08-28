@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void print_err(ANQ_ERR err)
+void print_err(int err)
 {
 	char *mess = malloc(ANQ_ERR_SIZE);
 	if(!mess)
@@ -23,7 +23,7 @@ void print_err(ANQ_ERR err)
 	free(mess);
 }
 
-char *err_to_mess(ANQ_ERR err)
+char *err_to_mess(int err)
 {
 	char *mess = malloc(ANQ_ERR_SIZE);
 

@@ -10,6 +10,6 @@
 
 /* The trigger, must be called after argv_init and after all the args have
  * been setted. */
-ANQ_ERR argv_parse(int argc, char *argv[]);
+void anq_argv_parse(int argc, char *argv[]);
 
 #endif

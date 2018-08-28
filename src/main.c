@@ -5,10 +5,10 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
+#include "help_menu.h"
 #include "err_codes.h"
 #include "argv_parser.h"
 #include "argv_handler.h"
-#include "default_arguments.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,46 +17,53 @@
 void main_init(int argc, char *argv[]);
 void main_exit();
 
-void decrypt_function(char *arga, char *argb)
+int decrypt_function(char *arga, char *argb)
 {
+	if(argb[0] == '\0') 
+		return ANQ_ERR_NO_DELIMITER;
+
 	printf("testing function %s=%s\n", arga, argb);
+	return 0;
 }
 
-void encrypt_function(char *arga, char *argb)
+int encrypt_function(char *arga, char *argb)
 {
+	if(argb[0] == '\0')
+		return ANQ_ERR_NO_DELIMITER;
+
 	printf("testing function %s=%s\n", arga, argb);
+	return 0;
 }
 
 void main_init(int argc, char *argv[])
 {
-	int  err;
+	int err;
 
-	err = argv_init();
+	err = anq_argv_add_parameter("-h", anq_help); 
 	if(err)
-		goto init_err;
+		goto no_param;
+	err = anq_argv_add_parameter("-d", decrypt_function);
+	if(err)
+		goto no_param;
+	err = anq_argv_add_parameter("-e", encrypt_function);
+	if(err)
+		goto no_param;
 
-	argv_add_parameter("-h", false, anq_help); 
-	argv_add_parameter("-d", true, decrypt_function);
-	argv_add_parameter("-e", true, encrypt_function);
-
-	err = argv_parse(argc, argv);
-
-	if(err == ANQ_ERR_UNALLOCATED_MEMORY ||
-	   err == ANQ_ERR_NO_DELIMITER)
-		goto pars_err;
-
+	/* Since the argv handler is the first thing allocated
+	 * by the program, anq_argv_parse will automatically
+	 * exit if a error happens. In the future if something
+	 * needs to be allocated before the argv handler we'll
+	 * need to change that. */
+	anq_argv_parse(argc, argv);
 	return;
 
-pars_err:
-	main_exit();
-init_err:
-	print_err(err);
+no_param:
 	exit(err);
 }
 
 void main_exit()
 {
-	argv_exit();
+	return;
 }
 
 int main(int argc, char *argv[])

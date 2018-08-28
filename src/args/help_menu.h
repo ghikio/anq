@@ -5,8 +5,8 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
-#ifndef ANQ_CONSTANTS_H
-#define ANQ_CONSTANTS_H
+#ifndef ANQ_HELPMENU_H
+#define ANQ_HELPMENU_H
 
 #define NAME	"ANQ"
 #define AUTHOR  "Vitor Fernandes <contact@thecriw.com>"
@@ -15,5 +15,7 @@
 		"\nCopyright (c) 2018, Vitor Flavio Fernandes Ferreira" \
 		"\nAll rights reserved." \
 		"\n\nhttps://spdx.org/licenses/BSD-3-Clause.html\n"
+
+int anq_help(char *arg, char *value);
 
 #endif
