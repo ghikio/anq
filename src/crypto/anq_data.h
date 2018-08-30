@@ -8,6 +8,8 @@
 #ifndef ANQ_CRYPTO_ANQDATA_H
 #define ANQ_CRYPTO_ANQDATA_H
 
+#include "argv_handler.h"
+
 /* Represent the way the program will act based
  * on user input. */
 enum anq_op {
@@ -17,8 +19,9 @@ enum anq_op {
 
 struct anq_data {
 	enum anq_op op;
-	char *keyquery;
-	char *plain;
+	char service[ARGV_READ_SIZE];
+	char keyquery[ARGV_READ_SIZE];
+	char plain[ARGV_READ_SIZE];
 };
 
 enum anq_op anq_get_operation(struct anq_data *dt);
@@ -27,5 +30,11 @@ void	    anq_set_operation(struct anq_data *dt,
 
 char *anq_get_keyquery(struct anq_data *dt);
 void  anq_set_keyquery(struct anq_data *dt, char *query);
+
+char *anq_get_service(struct anq_data *dt);
+void  anq_set_service(struct anq_data *dt, char *service);
+
+void ask_plain_password(struct anq_data *dt);
+int  validate_data(struct anq_data *dt);
 
 #endif

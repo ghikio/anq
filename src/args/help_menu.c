@@ -15,6 +15,7 @@ int anq_help(char *arg, char *value)
 	printf("-h - print help menu\n");
 	printf("-d - decrypt password\n");
 	printf("-e - encrypt password\n");
+	printf("-s - password's service name\n");
 
 	return 0;
 }

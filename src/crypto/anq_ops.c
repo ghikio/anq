@@ -13,18 +13,14 @@
 
 #include <assert.h>
 
-struct anq_ops c_ops;
-
-void anq_init_ops()
+void init_ops(struct anq_ops *op)
 {
 #ifdef ANQ_CRYPTO_LIB_GPGME
-	c_ops = (struct anq_ops) {
-		.crypto_lib = ANQ_CRYPTO_LIB_GPGME,
-		.init       = &anq_gpgme_init,
-		.exit	    = &anq_gpgme_exit,
-		.encrypt    = &anq_gpgme_encrypt,
-		.decrypt    = &anq_gpgme_decrypt,
-	};
+	op->crypto_lib = ANQ_CRYPTO_LIB_GPGME;
+	op->init       = &anq_gpgme_init;
+	op->exit       = &anq_gpgme_exit;
+	op->encrypt    = &anq_gpgme_encrypt;
+	op->decrypt    = &anq_gpgme_decrypt;
 #endif
-	assert(c_ops.crypto_lib != 0);
+	assert(op->crypto_lib != 0);
 }

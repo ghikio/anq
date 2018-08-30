@@ -57,8 +57,10 @@ argb_err:
 	free(arga);
 arga_err:
 	anq_argv_exit();
-	if(err)
+	if(err) {
+		print_err_str(err);
 		exit(err);
+	}
 }
 
 int anq_argv_check_argument(char *arga, char *argb)

@@ -11,35 +11,43 @@
 #include <string.h>
 #include <stdlib.h>
 
-void print_err(int err)
+void print_err_str(int err)
 {
-	char *mess = malloc(ANQ_ERR_SIZE);
-	if(!mess)
-		exit(ANQ_ERR_UNALLOCATED_MEMORY);
+	char *str = err_to_str(err);
+	fputs(str, stderr);
 
-	mess = err_to_mess(err);
-	fputs(mess, stderr);
-
-	free(mess);
+	free(str);
 }
 
-char *err_to_mess(int err)
+char *err_to_str(int err)
 {
-	char *mess = malloc(ANQ_ERR_SIZE);
+	char *str = calloc(ANQ_ERR_SIZE, sizeof(char));
+	if(!str)
+		return NULL;
 
 	switch(err) {
 	case ANQ_ERR_NO_DELIMITER:
-		strncpy(mess, "ERR: One of the parameters need a value.\n",
+		strncpy(str, "ERR: One of the parameters need a value.\n",
 			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_UNALLOCATED_MEMORY:
-		strncpy(mess, "ERR: Memory for internal component couldn't be allocated.\n",
+		strncpy(str, "ERR: Memory for internal component couldn't be allocated.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_NO_OPERATION:
+		strncpy(str, "ERR: Operation parameter required.\n", ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_NO_SERVICE:
+		strncpy(str, "ERR: Service parameter required.\n", ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_NO_KEYQUERY:
+		strncpy(str, "ERR: ANQ_KEYQUERY environment variable not found.\n",
 			ANQ_ERR_SIZE);
 		break;
 	default:
-		mess[0] = '\0';
+		str[0] = '\0';
 		break;
 	}
 
-	return mess;
+	return str;
 }

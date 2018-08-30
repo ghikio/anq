@@ -13,18 +13,22 @@
 enum anq_err_codes {
 	ANQ_OK = 0,
 
-	/* Given parameter needs a value and it hasn't. */
-	ANQ_ERR_NO_DELIMITER = -2,
-	
 	/* Returned if a malloc() or similar hasn't been able to
 	 * allocate memory */
-	ANQ_ERR_UNALLOCATED_MEMORY = -100,
-
+	ANQ_ERR_UNALLOCATED_MEMORY	= 1,
+	/* No operation parameter has been found. */
+	ANQ_ERR_NO_OPERATION		= 100,
+	/* Given parameter needs a value and it hasn't. */
+	ANQ_ERR_NO_DELIMITER		= 101,
+	/* Parameter -s required and not found. */
+	ANQ_ERR_NO_SERVICE		= 102,
+	/* env variable ANQ_KEYQUERY required and not found. */
+	ANQ_ERR_NO_KEYQUERY		= 103,
 	// Returned for not implemented features.
-	ANQ_ERR_NOT_IMPLEMENTED = 127,
+	ANQ_ERR_NOT_IMPLEMENTED		= 127,
 };
 
-void  print_err(int err);
-char *err_to_mess(int err);
+char *err_to_str(int err);
+void  print_err_str(int err);
 
 #endif

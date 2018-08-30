@@ -83,27 +83,21 @@ int anq_gpgme_setkey(struct anq_data *dt)
 	assert(ctx != NULL);
 	assert(dt->keyquery != NULL);
 
-	bool found = false;
 	gpgme_error_t err = 0;
 
-	while(!err && !found) {
-		if((err = gpgme_op_keylist_next(ctx, &keys[0]))
-				!= GPG_ERR_NO_ERROR) {
-			int i = strncmp(keys[0]->uids->name,
-				         dt->keyquery, 255);
+	err = gpgme_op_keylist_start(ctx, dt->keyquery, 0);
 
-			if(keys[0]->uids && keys[0]->uids->name &&
-					i == 0)
-				found = true;
-			else
-				gpgme_key_release(keys[0]);
-		}
+	if((err = gpgme_op_keylist_next(ctx, &keys[0]))
+			!= GPG_ERR_NO_ERROR) {
+		if(!keys[0]->uids || !keys[0]->uids->name)
+			goto not_found;
 	}
 
-	if(!found)
-		// TODO [criw hp] implement key not found
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
 	return 0;
+
+not_found:
+	// TODO [criw hp] implement key not found
+	exit(ANQ_ERR_NOT_IMPLEMENTED);
 }
 
 int anq_gpgme_encrypt(struct anq_data *dt)
@@ -137,6 +131,16 @@ int anq_gpgme_encrypt(struct anq_data *dt)
 		exit(ANQ_ERR_NOT_IMPLEMENTED);
 
 	gpgme_data_set_encoding(dst, GPGME_DATA_ENCODING_BINARY);
+
+	char buffer[2500];
+
+	err = gpgme_data_seek(dst, 0, SEEK_SET);
+	if(err)
+		// TODO [criw hp] Implement seek error
+		exit(1);
+
+	while((err = gpgme_data_read(dst, buffer, 2500)) > 0)
+		fwrite(buffer, err, 1, stdout);
 
 	gpgme_data_release(src);
 	gpgme_data_release(dst);

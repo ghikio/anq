@@ -5,6 +5,8 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
+#include "anq_ops.h"
+#include "anq_data.h"
 #include "help_menu.h"
 #include "err_codes.h"
 #include "argv_parser.h"
@@ -14,38 +16,47 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+struct anq_data dt;
+struct anq_ops  op;
+
 void main_init(int argc, char *argv[]);
 void main_exit();
 
-int decrypt_function(char *arga, char *argb)
+int argv_decrypt(char *arga, char *argb)
 {
-	if(argb[0] == '\0') 
-		return ANQ_ERR_NO_DELIMITER;
-
-	printf("testing function %s=%s\n", arga, argb);
+	anq_set_operation(&dt, ANQ_OP_DECRYPT);
 	return 0;
 }
 
-int encrypt_function(char *arga, char *argb)
+int argv_encrypt(char *arga, char *argb)
+{
+	anq_set_operation(&dt, ANQ_OP_ENCRYPT);
+	return 0;
+}
+
+int argv_service(char *arga, char *argb)
 {
 	if(argb[0] == '\0')
 		return ANQ_ERR_NO_DELIMITER;
 
-	printf("testing function %s=%s\n", arga, argb);
+	anq_set_service(&dt, argb);
 	return 0;
 }
 
-void main_init(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int err;
 
 	err = anq_argv_add_parameter("-h", anq_help); 
 	if(err)
 		goto no_param;
-	err = anq_argv_add_parameter("-d", decrypt_function);
+	err = anq_argv_add_parameter("-d", argv_decrypt);
 	if(err)
 		goto no_param;
-	err = anq_argv_add_parameter("-e", encrypt_function);
+	err = anq_argv_add_parameter("-e", argv_encrypt);
+	if(err)
+		goto no_param;
+	err = anq_argv_add_parameter("-s", argv_service);
 	if(err)
 		goto no_param;
 
@@ -55,22 +66,21 @@ void main_init(int argc, char *argv[])
 	 * needs to be allocated before the argv handler we'll
 	 * need to change that. */
 	anq_argv_parse(argc, argv);
-	return;
+
+	err = validate_data(&dt);
+	if(err) {
+		print_err_str(err);
+		goto no_param;
+	}
+
+	init_ops(&op);
+
+	err = op.init(&dt);
+	err = op.encrypt(&dt);
+	err = op.exit(&dt);
+
+	return 0;
 
 no_param:
 	exit(err);
-}
-
-void main_exit()
-{
-	return;
-}
-
-int main(int argc, char *argv[])
-{
-	main_init(argc, argv);
-
-	// not yet <3
-
-	main_exit();
 }
