@@ -71,16 +71,6 @@ void anq_set_plain(struct anq_data *dt, char *plain)
 	strncpy(dt->plain, plain, ARGV_READ_SIZE);
 }
 
-char *anq_get_cypher(struct anq_data *dt)
-{
-	return dt->cypher;
-}
-
-void anq_set_cypher(struct anq_data *dt, char *cypher)
-{
-	strncpy(dt->cypher, cypher, CYPHER_SIZE);
-}
-
 // TODO [criw mp] comment this up a little
 void ask_plain_password(struct anq_data *dt)
 {
@@ -111,7 +101,9 @@ int validate_data(struct anq_data *dt)
 		return ANQ_ERR_NO_KEYQUERY;
 	anq_set_keyquery(dt, key);
 
-	char *passd = getenv("ANQ_PASSD");
+	char *passd = getenv("ANQ_PASSDIR");
+	if(passd == NULL)
+		return ANQ_ERR_NO_PASSDIR;
 	anq_set_passdir(dt, passd);
 
 	if(dt->op == ANQ_OP_ENCRYPT) {

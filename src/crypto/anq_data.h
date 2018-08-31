@@ -30,16 +30,13 @@ enum anq_op {
  *	    saved. This is defined by the ANQ_PASSDIR env var.
  * key    - Specifies the key name that will encrypt & decrypt.
  *	    This is defined by the ANQ_KEY env var.
- * plain  - Stores the plain password.
- * cypher - Stores the chyper password. */
+ * plain  - Stores the plain password. */
 struct anq_data {
 	enum anq_op op;
 	char svc[ARGV_READ_SIZE];
 	char passd[ARGV_READ_SIZE];
 	char key[ARGV_READ_SIZE];
-
 	char plain[ARGV_READ_SIZE];
-	char cypher[CYPHER_SIZE];
 };
 
 enum anq_op anq_get_operation(struct anq_data *dt);
@@ -57,9 +54,6 @@ void  anq_set_passdir(struct anq_data *dt, char *passd);
 
 char *anq_get_plain(struct anq_data *dt);
 void  anq_set_plain(struct anq_data *dt, char *plain);
-
-char *anq_get_cypher(struct anq_data *dt);
-void  anq_set_cypher(struct anq_data *dt, char *chyper);
 
 void ask_plain_password(struct anq_data *dt);
 int  validate_data(struct anq_data *dt);
