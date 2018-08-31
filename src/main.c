@@ -73,11 +73,7 @@ int main(int argc, char *argv[])
 		goto no_param;
 	}
 
-	init_ops(&op);
-
-	err = op.init(&dt);
-	err = op.encrypt(&dt);
-	err = op.exit(&dt);
+	err = start_ops(&op, &dt);
 
 	return 0;
 

@@ -24,3 +24,32 @@ void init_ops(struct anq_ops *op)
 #endif
 	assert(op->crypto_lib != 0);
 }
+
+int start_ops(struct anq_ops *op, struct anq_data *dt)
+{
+	int err;
+	if(op->crypto_lib == 0)
+		init_ops(op);
+	err = op->init(dt);
+
+	switch(dt->op) {
+	case ANQ_OP_ENCRYPT:
+		err = op->encrypt(dt);
+		if(err)
+			goto enc_err;
+		break;
+	case ANQ_OP_DECRYPT:
+		err = op->decrypt(dt);
+		break;
+	default:
+		break;
+	}
+
+	err = op->exit(dt);
+
+	return 0;
+
+enc_err:
+	// TODO [criw hp] implement the actual error handling
+	return err;
+}

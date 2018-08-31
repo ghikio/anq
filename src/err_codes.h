@@ -24,6 +24,10 @@ enum anq_err_codes {
 	ANQ_ERR_NO_SERVICE		= 102,
 	/* env variable ANQ_KEYQUERY required and not found. */
 	ANQ_ERR_NO_KEYQUERY		= 103,
+	/* A null password was inserted when asking. */
+	ANQ_ERR_NO_PASSWORD		= 104,
+	/* env variable ANQ_PASSDIR required and not found. */
+	ANQ_ERR_NO_PASSDIR		= 105,
 	// Returned for not implemented features.
 	ANQ_ERR_NOT_IMPLEMENTED		= 127,
 };

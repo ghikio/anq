@@ -25,6 +25,6 @@ struct anq_ops {
 	int (*decrypt) (struct anq_data *);
 };
 
-void init_ops(struct anq_ops *op);
+int start_ops(struct anq_ops *op, struct anq_data *dt);
 
 #endif

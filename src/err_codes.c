@@ -35,13 +35,23 @@ char *err_to_str(int err)
 			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_OPERATION:
-		strncpy(str, "ERR: Operation parameter required.\n", ANQ_ERR_SIZE);
+		strncpy(str, "ERR: Operation parameter required.\n",
+			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_SERVICE:
-		strncpy(str, "ERR: Service parameter required.\n", ANQ_ERR_SIZE);
+		strncpy(str, "ERR: Service parameter required.\n", 
+			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_KEYQUERY:
 		strncpy(str, "ERR: ANQ_KEYQUERY environment variable not found.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_NO_PASSWORD:
+		strncpy(str, "ERR: A zero-length password was inserted.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_NO_PASSDIR:
+		strncpy(str, "ERR: ANQ_PASSDIR environment variable is not set.\n",
 			ANQ_ERR_SIZE);
 		break;
 	default:
