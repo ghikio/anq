@@ -31,22 +31,34 @@ void anq_set_operation(struct anq_data *dt, enum anq_op op)
 
 char *anq_get_keyquery(struct anq_data *dt)
 {
-	return dt->keyquery;
+	return dt->key;
 }
 
 void anq_set_keyquery(struct anq_data *dt, char *query)
 {
-	strncpy(dt->keyquery, query, ARGV_READ_SIZE);
+	assert(query != NULL);
+	strncpy(dt->key, query, ARGV_READ_SIZE);
 }
 
 char *anq_get_service(struct anq_data *dt)
 {
-	return dt->service;
+	return dt->svc;
 }
 
-void anq_set_service(struct anq_data *dt, char *service)
+void anq_set_service(struct anq_data *dt, char *svc)
 {
-	strncpy(dt->service, service, ARGV_READ_SIZE);
+	assert(svc != NULL);
+	strncpy(dt->svc, svc, ARGV_READ_SIZE);
+}
+
+char *anq_get_passdir(struct anq_data *dt)
+{
+	return dt->passd;
+}
+
+void anq_set_passdir(struct anq_data *dt, char *passd)
+{
+	strncpy(dt->passd, passd, ARGV_READ_SIZE);
 }
 
 void ask_plain_password(struct anq_data *dt)
@@ -61,10 +73,9 @@ void ask_plain_password(struct anq_data *dt)
 
 	tcsetattr(STDIN_FILENO, TCSANOW, &nterm);
 
+	//printf("Introduce password: ");
 	if(fgets(dt->plain, ARGV_READ_SIZE, stdin) == NULL)
 		dt->plain[0] = '\0';
-	else
-		dt->plain[strlen(dt->plain) - 1] = '\0';
 
 	// go back to the old settings
 	tcsetattr(STDIN_FILENO, TCSANOW, &oterm);
@@ -72,15 +83,23 @@ void ask_plain_password(struct anq_data *dt)
 
 int validate_data(struct anq_data *dt)
 {
-	if(dt->service[0] == '\0')
+	if(dt->svc[0] == '\0')
 		return ANQ_ERR_NO_SERVICE;
 
-	char *keyquery = getenv("ANQ_KEYQUERY");
-	if(keyquery == NULL)
+	char *key = getenv("ANQ_KEYQUERY");
+	if(key == NULL)
 		return ANQ_ERR_NO_KEYQUERY;
-	anq_set_keyquery(dt, keyquery);
+	anq_set_keyquery(dt, key);
 
-	ask_plain_password(dt);
+	char *passd = getenv("ANQ_PASSD");
+	anq_set_passdir(dt, passd);
+
+	if(dt->op == ANQ_OP_ENCRYPT) {
+		ask_plain_password(dt);
+
+		if(dt->plain[0] == '\0')
+			return ANQ_ERR_NO_PASSWORD;
+	}
 
 	return 0;
 }

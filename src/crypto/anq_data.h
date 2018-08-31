@@ -10,6 +10,8 @@
 
 #include "argv_handler.h"
 
+#define CYPHER_SIZE 1024
+
 /* Represent the way the program will act based
  * on user input. */
 enum anq_op {
@@ -17,11 +19,27 @@ enum anq_op {
 	ANQ_OP_DECRYPT = 4,
 };
 
+/* Stores user input by arguments and environment vars plus
+ * data manipulated by the program that needs to be shared. 
+ *
+ * op	  - Specifies the action that needs to be executed.
+ * svc    - Specifies what's the password from.
+ *		When encrypting, it's used as the file name. 
+ *		When decrypting, it's used to find the file.
+ * passd  - Specifies the directory where password files are
+ *	    saved. This is defined by the ANQ_PASSDIR env var.
+ * key    - Specifies the key name that will encrypt & decrypt.
+ *	    This is defined by the ANQ_KEY env var.
+ * plain  - Stores the plain password.
+ * cypher - Stores the chyper password. */
 struct anq_data {
 	enum anq_op op;
-	char service[ARGV_READ_SIZE];
-	char keyquery[ARGV_READ_SIZE];
+	char svc[ARGV_READ_SIZE];
+	char passd[ARGV_READ_SIZE];
+	char key[ARGV_READ_SIZE];
+
 	char plain[ARGV_READ_SIZE];
+	char cypher[CYPHER_SIZE];
 };
 
 enum anq_op anq_get_operation(struct anq_data *dt);
@@ -32,7 +50,10 @@ char *anq_get_keyquery(struct anq_data *dt);
 void  anq_set_keyquery(struct anq_data *dt, char *query);
 
 char *anq_get_service(struct anq_data *dt);
-void  anq_set_service(struct anq_data *dt, char *service);
+void  anq_set_service(struct anq_data *dt, char *svc);
+
+char *anq_get_passdir(struct anq_data *dt);
+void  anq_set_passdir(struct anq_data *dt, char *passd);
 
 void ask_plain_password(struct anq_data *dt);
 int  validate_data(struct anq_data *dt);
