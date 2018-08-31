@@ -80,12 +80,14 @@ int anq_gpgme_exit()
 
 int anq_gpgme_setkey(struct anq_data *dt)
 {
-	assert(ctx != NULL);
-	assert(dt->keyquery != NULL);
+	char *query = anq_get_keyquery(dt);
+
+	assert(ctx   != NULL);
+	assert(query != NULL);
 
 	gpgme_error_t err = 0;
 
-	err = gpgme_op_keylist_start(ctx, dt->keyquery, 0);
+	err = gpgme_op_keylist_start(ctx, query, 0);
 
 	if((err = gpgme_op_keylist_next(ctx, &keys[0]))
 			!= GPG_ERR_NO_ERROR) {
@@ -100,10 +102,51 @@ not_found:
 	exit(ANQ_ERR_NOT_IMPLEMENTED);
 }
 
+int anq_gpgme_write(struct anq_data *dt, gpgme_data_t str)
+{
+	int   err;
+	char *passd = anq_get_passdir(dt);
+	char *src   = anq_get_service(dt);
+	char *file  = calloc(strlen(passd) + strlen(src) + 1,
+			     sizeof(char));
+	if(!file)
+		goto no_file;
+
+	strcpy(file, passd);
+	strcat(file, "/");
+	strcat(file, src);
+
+	FILE *fp;
+	fp = fopen(file, "w");
+	if(!fp)
+		goto no_file;
+
+	char buffer[CYPHER_SIZE];
+
+	err = gpgme_data_seek(str, 0, SEEK_SET);
+	if(err)
+		// TODO [criw hp] implement
+		goto no_file;
+
+	while((err = gpgme_data_read(str, buffer, CYPHER_SIZE))
+			> 0)
+		fwrite(buffer, err, 1, fp);
+
+	fclose(fp);
+
+	return 0;
+
+no_file:
+	// TODO [criw hp] implement
+	exit(ANQ_ERR_NOT_IMPLEMENTED);
+}
+
 int anq_gpgme_encrypt(struct anq_data *dt)
 {
+	char *plain = anq_get_plain(dt);
+
 	assert(ctx != NULL);
-	assert(dt->plain != NULL);
+	assert(plain != NULL);
 	assert(keys[0] != NULL && keys[1] == NULL);
 
 	gpgme_error_t err = 0;
@@ -113,8 +156,8 @@ int anq_gpgme_encrypt(struct anq_data *dt)
 	/* gpgme_data_t stores and delivers the kind of data
 	 * that must be exchanged between the user and the
 	 * crypto engine. */
-	if((err = gpgme_data_new_from_mem(&src, dt->plain,
-					  strlen(dt->plain), 1))
+	if((err = gpgme_data_new_from_mem(&src, plain,
+					  strlen(plain), 1))
 			!= GPG_ERR_NO_ERROR)
 		// TODO [criw hp] implement set data error
 		exit(ANQ_ERR_NOT_IMPLEMENTED);
@@ -132,15 +175,7 @@ int anq_gpgme_encrypt(struct anq_data *dt)
 
 	gpgme_data_set_encoding(dst, GPGME_DATA_ENCODING_BINARY);
 
-	char buffer[2500];
-
-	err = gpgme_data_seek(dst, 0, SEEK_SET);
-	if(err)
-		// TODO [criw hp] Implement seek error
-		exit(1);
-
-	while((err = gpgme_data_read(dst, buffer, 2500)) > 0)
-		fwrite(buffer, err, 1, stdout);
+	anq_gpgme_write(dt, dst);
 
 	gpgme_data_release(src);
 	gpgme_data_release(dst);
