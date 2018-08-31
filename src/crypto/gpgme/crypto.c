@@ -104,7 +104,7 @@ not_found:
 
 int anq_gpgme_write(struct anq_data *dt, gpgme_data_t str)
 {
-	int   err;
+	gpgme_error_t err = 0;
 	char *passd = anq_get_passdir(dt);
 	char *src   = anq_get_service(dt);
 	char *file  = calloc(strlen(passd) + strlen(src) + 1,
@@ -185,6 +185,55 @@ int anq_gpgme_encrypt(struct anq_data *dt)
 
 int anq_gpgme_decrypt(struct anq_data *dt)
 {
-	exit(ANQ_ERR_NOT_IMPLEMENTED);
+	assert(ctx != NULL);
+
+	gpgme_error_t err = 0;
+	char *passd = anq_get_passdir(dt);
+	char *srv   = anq_get_service(dt);
+	char *file  = calloc(strlen(passd) + strlen(srv) + 1,
+			     sizeof(char));
+	if(!file)
+		goto no_file;
+
+	strcpy(file, passd);
+	strcat(file, "/");
+	strcat(file, srv);
+
+	gpgme_data_t src;
+	gpgme_data_t dst;
+
+	if((err = gpgme_data_new_from_file(&src, file, 1))
+			!= GPG_ERR_NO_ERROR)
+		// TODO [criw hp] implement set data error 
+		exit(ANQ_ERR_NOT_IMPLEMENTED);
+
+	if((err = gpgme_data_new(&dst)) != GPG_ERR_NO_ERROR)
+		// TODO [criw hp] implement set data error 
+		exit(ANQ_ERR_NOT_IMPLEMENTED);
+
+	if((err = gpgme_op_decrypt(ctx, src, dst)) 
+			!= GPG_ERR_NO_ERROR)
+		// TODO [criw hp] implement decrypt error
+		exit(ANQ_ERR_NOT_IMPLEMENTED);
+
+
+	char buffer[CYPHER_SIZE];
+
+	err = gpgme_data_seek(dst, 0, SEEK_SET);
+	if(err)
+		// TODO [criw hp] Implement seek error
+		exit(1);
+
+	while((err = gpgme_data_read(dst, buffer, CYPHER_SIZE)) 
+			> 0)
+		fwrite(buffer, err, 1, stdout);
+
+	gpgme_data_release(src);
+	gpgme_data_release(dst);
+
 	return 0;
+
+no_file:
+	// TODO [criw hp] implement
+	exit(ANQ_ERR_NOT_IMPLEMENTED);
 }
