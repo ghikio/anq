@@ -61,6 +61,27 @@ void anq_set_passdir(struct anq_data *dt, char *passd)
 	strncpy(dt->passd, passd, ARGV_READ_SIZE);
 }
 
+char *anq_get_plain(struct anq_data *dt)
+{
+	return dt->plain;
+}
+
+void anq_set_plain(struct anq_data *dt, char *plain)
+{
+	strncpy(dt->plain, plain, ARGV_READ_SIZE);
+}
+
+char *anq_get_cypher(struct anq_data *dt)
+{
+	return dt->cypher;
+}
+
+void anq_set_cypher(struct anq_data *dt, char *cypher)
+{
+	strncpy(dt->cypher, cypher, CYPHER_SIZE);
+}
+
+// TODO [criw mp] comment this up a little
 void ask_plain_password(struct anq_data *dt)
 {
 	static struct termios oterm;
@@ -77,7 +98,6 @@ void ask_plain_password(struct anq_data *dt)
 	if(fgets(dt->plain, ARGV_READ_SIZE, stdin) == NULL)
 		dt->plain[0] = '\0';
 
-	// go back to the old settings
 	tcsetattr(STDIN_FILENO, TCSANOW, &oterm);
 }
 

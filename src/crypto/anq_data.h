@@ -55,6 +55,12 @@ void  anq_set_service(struct anq_data *dt, char *svc);
 char *anq_get_passdir(struct anq_data *dt);
 void  anq_set_passdir(struct anq_data *dt, char *passd);
 
+char *anq_get_plain(struct anq_data *dt);
+void  anq_set_plain(struct anq_data *dt, char *plain);
+
+char *anq_get_cypher(struct anq_data *dt);
+void  anq_set_cypher(struct anq_data *dt, char *chyper);
+
 void ask_plain_password(struct anq_data *dt);
 int  validate_data(struct anq_data *dt);
 
