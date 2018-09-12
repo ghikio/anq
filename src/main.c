@@ -37,7 +37,7 @@ int argv_encrypt(char *arga, char *argb)
 int argv_service(char *arga, char *argb)
 {
 	if(argb[0] == '\0')
-		return ANQ_ERR_NO_DELIMITER;
+		return ANQ_ERR_NO_SERVICE_VALUE;
 
 	anq_set_service(&dt, argb);
 	return 0;
@@ -68,15 +68,14 @@ int main(int argc, char *argv[])
 	anq_argv_parse(argc, argv);
 
 	err = validate_data(&dt);
-	if(err) {
-		print_err_str(err);
+	if(err)
 		goto no_param;
-	}
 
 	err = start_ops(&op, &dt);
 
 	return 0;
 
 no_param:
+	print_err_str(err);
 	exit(err);
 }

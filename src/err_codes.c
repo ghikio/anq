@@ -26,10 +26,6 @@ char *err_to_str(int err)
 		return NULL;
 
 	switch(err) {
-	case ANQ_ERR_NO_DELIMITER:
-		strncpy(str, "ERR: One of the parameters need a value.\n",
-			ANQ_ERR_SIZE);
-		break;
 	case ANQ_ERR_UNALLOCATED_MEMORY:
 		strncpy(str, "ERR: Memory for internal component couldn't be allocated.\n",
 			ANQ_ERR_SIZE);
@@ -40,6 +36,10 @@ char *err_to_str(int err)
 		break;
 	case ANQ_ERR_NO_SERVICE:
 		strncpy(str, "ERR: Service parameter required.\n", 
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_NO_SERVICE_VALUE:
+		strncpy(str, "ERR: Service parameter needs a value and didn't found one.\n",
 			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_KEYQUERY:

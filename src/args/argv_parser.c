@@ -47,7 +47,7 @@ void anq_argv_parse(int argc, char *argv[])
 		anq_argv_slice(argv[i], '=', arga, argb);
 		err = anq_argv_check_argument(arga, argb);
 
-		if(err == ANQ_ERR_NO_DELIMITER)
+		if(err)
 			goto del_err;
 	}
 
@@ -75,7 +75,7 @@ int anq_argv_check_argument(char *arga, char *argb)
 			err = (*fop)(arga, argb);
 
 			if(err)
-				return ANQ_ERR_NO_DELIMITER;
+				return err;
 		}
 	}
 

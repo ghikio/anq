@@ -18,10 +18,10 @@ enum anq_err_codes {
 	ANQ_ERR_UNALLOCATED_MEMORY	= 1,
 	/* No operation parameter has been found. */
 	ANQ_ERR_NO_OPERATION		= 100,
-	/* Given parameter needs a value and it hasn't. */
-	ANQ_ERR_NO_DELIMITER		= 101,
 	/* Parameter -s required and not found. */
-	ANQ_ERR_NO_SERVICE		= 102,
+	ANQ_ERR_NO_SERVICE		= 101,
+	/* Parameter -s requires a value and hasn't one. */
+	ANQ_ERR_NO_SERVICE_VALUE	= 102,
 	/* env variable ANQ_KEYQUERY required and not found. */
 	ANQ_ERR_NO_KEYQUERY		= 103,
 	/* A null password was inserted when asking. */
