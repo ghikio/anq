@@ -2,10 +2,9 @@ CC=clang
 
 CCFLAGS=-std=c11 -g -Wall
 LDFLAGS=
-IFLAGS=-Isrc -Isrc/args -Isrc/crypto
+IFLAGS=-Isrc -Isrc/configuration -Isrc/crypto
 DEFINES=
 
-#DEFINES=-DNDEBUG
 CCFLAGS+=$(DEFINES)
 
 ifdef ANQ_LOCAL_LIBS
@@ -18,8 +17,8 @@ SRC_DIR=src
 OBJS=src/main.o \
      src/err_codes.o
 
-include src/args/make.config
 include src/crypto/make.config
+include src/configuration/make.config
 
 .PHONY: prepare anq clean
 .SUFFIXES: .c .o
