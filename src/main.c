@@ -6,9 +6,9 @@
  */
 
 #include "parser.h"
-#include "anq_ops.h"
-#include "anq_data.h"
 #include "err_codes.h"
+#include "crypto_ops.h"
+#include "crypto_data.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,13 +21,7 @@ int main(int argc, char *argv[])
 {
 	int err;
 
-	/* Since the argv handler is the first thing allocated
-	 * by the program, anq_argv_parse will automatically
-	 * exit if a error happens. In the future if something
-	 * needs to be allocated before the argv handler we'll
-	 * need to change that. */
 	parse(argc, argv);
-
 	err = crypto_validate_data(&dt);
 	if(err)
 		goto data_err;

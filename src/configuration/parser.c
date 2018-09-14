@@ -6,9 +6,9 @@
  */
 
 #include "parser.h"
-#include "anq_ops.h"
-#include "anq_data.h"
 #include "err_codes.h"
+#include "crypto_ops.h"
+#include "crypto_data.h"
 #include "argv_parser.h"
 #include "argv_handler.h"
 #include "configuration_parser.h"

@@ -8,7 +8,7 @@
 #ifndef ANQ_CRYPTO_GPGME_CRYPTO_H
 #define ANQ_CRYPTO_GPGME_CRYPTO_H
 
-#include "anq_data.h"
+#include "crypto_data.h"
 
 int anq_gpgme_init(struct crypto_data *dt);
 int anq_gpgme_exit(struct crypto_data *dt);

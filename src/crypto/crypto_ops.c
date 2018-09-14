@@ -5,8 +5,8 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
-#include "anq_ops.h"
-#include "anq_data.h"
+#include "crypto_ops.h"
+#include "crypto_data.h"
 
 #ifdef ANQ_CRYPTO_LIB_GPGME
 	#include "gpgme/crypto.h"

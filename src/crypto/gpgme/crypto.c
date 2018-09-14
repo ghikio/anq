@@ -6,8 +6,8 @@
  */
 
 #include "crypto.h"
-#include "anq_data.h"
 #include "err_codes.h"
+#include "crypto_data.h"
 
 #include <gpgme.h>
 #include <locale.h>
