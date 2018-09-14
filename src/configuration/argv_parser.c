@@ -18,10 +18,10 @@
  *
  * If no delimiter is found, returns ANQ_ERR_NO_DELIMITER,
  * otherwise 0, even if sb ends being NULL. */
-void anq_argv_slice(char *argv, char del, char *sa, char *sb);
+void slice_argv(char *argv, char del, char *sa, char *sb);
 /* Grab the argument sliced (e.g. arga = "-d", argb = "~/home")
  * and check if it coincide with one of our record. */
-int anq_argv_check_argument(char *arga, char *argb);
+int check_argv(char *arga, char *argb);
 
 /* Check each argument for a defined one in argv_handler and if found
  * call it's callback. */
@@ -44,8 +44,8 @@ int parse_argv(int argc, char *argv[])
 
 	/* Start at 1 so we don't parse the program name. */
 	for(int i = 1; i < argc; i++) {
-		anq_argv_slice(argv[i], '=', arga, argb);
-		err = anq_argv_check_argument(arga, argb);
+		slice_argv(argv[i], '=', arga, argb);
+		err = check_argv(arga, argb);
 
 		if(err)
 			goto del_err;
@@ -56,19 +56,19 @@ del_err:
 argb_err:
 	free(arga);
 arga_err:
-	anq_argv_exit();
+	exit_args();
 	return err;
 }
 
-int anq_argv_check_argument(char *arga, char *argb)
+int check_argv(char *arga, char *argb)
 {
 	int err;
 
-	short acnt = anq_argv_get_argc();
-	for(short x = 0; x < acnt; x++) {
-		if(strncmp(anq_argv_get_arg(x), arga, ARGV_READ_SIZE) == 0) {
+	short ahc = args_get_argc();
+	for(short x = 0; x < ahc; x++) {
+		if(strncmp(args_get_arg(x), arga, ARGV_READ_SIZE) == 0) {
 			/* Get the callback pointer and calls it. */
-			argv_fp fop = anq_argv_get_fop(x);
+			argv_fp fop = args_get_fop(x);
 			err = (*fop)(arga, argb);
 
 			if(err)
@@ -79,7 +79,7 @@ int anq_argv_check_argument(char *arga, char *argb)
 	return ANQ_OK;
 }
 
-void anq_argv_slice(char *argv, char del, char *sa, char *sb)
+void slice_argv(char *argv, char del, char *sa, char *sb)
 {
 	int  i = 0;
 	bool found = false;

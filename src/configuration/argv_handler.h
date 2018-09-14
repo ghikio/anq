@@ -21,7 +21,7 @@
  * are null, is the handler function responsibility to do so.*/
 typedef int (*argv_fp)(char *, char *);
 
-void anq_argv_exit(void);
+void exit_args(void);
 
 /* Defines a interface where each argument information is saved in different
  * arrays with the same index.
@@ -30,21 +30,21 @@ void anq_argv_exit(void);
  * fops    - stores the pointer to the argument's callback function. 
  *
  * argc    - stores how much arguments have been inserted. */
-struct anq_argv_handler {
+struct args_handler {
 	char argv[ARGV_SIZE][ARGV_READ_SIZE];
 	argv_fp fops[ARGV_SIZE];
 
 	short argc;
 };
 
-char   *anq_argv_get_arg(int i);
-argv_fp anq_argv_get_fop(int i);
-short   anq_argv_get_argc();
+char   *args_get_arg(int i);
+argv_fp args_get_fop(int i);
+short   args_get_argc();
 
 /* Push elements to argv_handler.
  *
  * parameter:	The new argument. (e.g. -d)
  * fop:		The argument callback function. */
-int anq_argv_add_parameter(char *arg, argv_fp fop);
+int args_add_arg(char *arg, argv_fp fop);
 
 #endif

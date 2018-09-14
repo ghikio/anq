@@ -48,16 +48,16 @@ int main(int argc, char *argv[])
 {
 	int err;
 
-	err = anq_argv_add_parameter("-h", anq_help); 
+	err = args_add_arg("-h", anq_help); 
 	if(err)
 		goto no_param;
-	err = anq_argv_add_parameter("-d", argv_decrypt);
+	err = args_add_arg("-d", argv_decrypt);
 	if(err)
 		goto no_param;
-	err = anq_argv_add_parameter("-e", argv_encrypt);
+	err = args_add_arg("-e", argv_encrypt);
 	if(err)
 		goto no_param;
-	err = anq_argv_add_parameter("-s", argv_service);
+	err = args_add_arg("-s", argv_service);
 	if(err)
 		goto no_param;
 
