@@ -5,11 +5,9 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
-#ifndef ANQ_ARGV_PARSER_H
-#define ANQ_ARGV_PARSER_H
+#ifndef ANQ_CONFIGURATION_PARSER_H
+#define ANQ_CONFIGURATION_PARSER_H
 
-/* The trigger, must be called after argv_init and after all the args have
- * been setted. */
-int parse_argv(int argc, char *argv[]);
+void parse(int argc, char *argv[]);
 
 #endif

@@ -25,7 +25,7 @@ int anq_argv_check_argument(char *arga, char *argb);
 
 /* Check each argument for a defined one in argv_handler and if found
  * call it's callback. */
-void anq_argv_parse(int argc, char *argv[])
+int parse_argv(int argc, char *argv[])
 {
 	int  err;
 	char *arga = calloc(ARGV_READ_SIZE + 1, sizeof(char));
@@ -57,10 +57,7 @@ argb_err:
 	free(arga);
 arga_err:
 	anq_argv_exit();
-	if(err) {
-		print_err_str(err);
-		exit(err);
-	}
+	return err;
 }
 
 int anq_argv_check_argument(char *arga, char *argb)

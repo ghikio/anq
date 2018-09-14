@@ -5,6 +5,7 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
+#include "parser.h"
 #include "anq_ops.h"
 #include "anq_data.h"
 #include "help_menu.h"
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
 	 * exit if a error happens. In the future if something
 	 * needs to be allocated before the argv handler we'll
 	 * need to change that. */
-	anq_argv_parse(argc, argv);
+	parse(argc, argv);
 
 	err = validate_data(&dt);
 	if(err)
