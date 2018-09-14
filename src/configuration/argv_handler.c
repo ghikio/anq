@@ -52,20 +52,13 @@ argv_fp args_get_fop(int i)
 	return ah->fops[i];
 }
 
-int args_add_arg(char *arg, argv_fp fp)
+void args_add_arg(char *arg, argv_fp fp)
 {
-	int err;
-	if(!ah) {
-		err = init_args();
-		if(err)
-			return err;
-	}
-
+	assert(ah != NULL);
 	assert(ah->argc < ARGV_SIZE);
 
 	strncpy(ah->argv[ah->argc], arg, ARGV_READ_SIZE);
 	/* set the callback function for said parameter */
 	ah->fops[ah->argc] = fp;
 	ah->argc++;
-	return ANQ_OK;
 }

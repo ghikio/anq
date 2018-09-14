@@ -8,10 +8,7 @@
 #include "parser.h"
 #include "anq_ops.h"
 #include "anq_data.h"
-#include "help_menu.h"
 #include "err_codes.h"
-#include "argv_parser.h"
-#include "argv_handler.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,46 +17,9 @@
 struct anq_data dt;
 struct anq_ops  op;
 
-void main_init(int argc, char *argv[]);
-void main_exit();
-
-int argv_decrypt(char *arga, char *argb)
-{
-	anq_set_operation(&dt, ANQ_OP_DECRYPT);
-	return 0;
-}
-
-int argv_encrypt(char *arga, char *argb)
-{
-	anq_set_operation(&dt, ANQ_OP_ENCRYPT);
-	return 0;
-}
-
-int argv_service(char *arga, char *argb)
-{
-	if(argb[0] == '\0')
-		return ANQ_ERR_NO_SERVICE_VALUE;
-
-	anq_set_service(&dt, argb);
-	return 0;
-}
-
 int main(int argc, char *argv[])
 {
 	int err;
-
-	err = args_add_arg("-h", anq_help); 
-	if(err)
-		goto no_param;
-	err = args_add_arg("-d", argv_decrypt);
-	if(err)
-		goto no_param;
-	err = args_add_arg("-e", argv_encrypt);
-	if(err)
-		goto no_param;
-	err = args_add_arg("-s", argv_service);
-	if(err)
-		goto no_param;
 
 	/* Since the argv handler is the first thing allocated
 	 * by the program, anq_argv_parse will automatically

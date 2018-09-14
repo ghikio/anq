@@ -21,6 +21,7 @@
  * are null, is the handler function responsibility to do so.*/
 typedef int (*argv_fp)(char *, char *);
 
+int  init_args(void);
 void exit_args(void);
 
 /* Defines a interface where each argument information is saved in different
@@ -45,6 +46,6 @@ short   args_get_argc();
  *
  * parameter:	The new argument. (e.g. -d)
  * fop:		The argument callback function. */
-int args_add_arg(char *arg, argv_fp fop);
+void args_add_arg(char *arg, argv_fp fop);
 
 #endif
