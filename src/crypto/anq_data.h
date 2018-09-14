@@ -14,7 +14,7 @@
 
 /* Represent the way the program will act based
  * on user input. */
-enum anq_op {
+enum op {
 	ANQ_OP_ENCRYPT = 2,
 	ANQ_OP_DECRYPT = 4,
 };
@@ -31,31 +31,31 @@ enum anq_op {
  * key    - Specifies the key name that will encrypt & decrypt.
  *	    This is defined by the ANQ_KEY env var.
  * plain  - Stores the plain password. */
-struct anq_data {
-	enum anq_op op;
+struct crypto_data {
+	enum op op;
 	char svc[ARGV_READ_SIZE];
 	char passd[ARGV_READ_SIZE];
 	char key[ARGV_READ_SIZE];
 	char plain[ARGV_READ_SIZE];
 };
 
-enum anq_op anq_get_operation(struct anq_data *dt);
-void	    anq_set_operation(struct anq_data *dt, 
-			      enum anq_op op);
+enum op crypto_get_operation(struct crypto_data *dt);
+void    crypto_set_operation(struct crypto_data *dt, 
+			     enum op op);
 
-char *anq_get_keyquery(struct anq_data *dt);
-void  anq_set_keyquery(struct anq_data *dt, char *query);
+char *crypto_get_keyquery(struct crypto_data *dt);
+void  crypto_set_keyquery(struct crypto_data *dt, char *query);
 
-char *anq_get_service(struct anq_data *dt);
-void  anq_set_service(struct anq_data *dt, char *svc);
+char *crypto_get_service(struct crypto_data *dt);
+void  crypto_set_service(struct crypto_data *dt, char *svc);
 
-char *anq_get_passdir(struct anq_data *dt);
-void  anq_set_passdir(struct anq_data *dt, char *passd);
+char *crypto_get_passdir(struct crypto_data *dt);
+void  crypto_set_passdir(struct crypto_data *dt, char *passd);
 
-char *anq_get_plain(struct anq_data *dt);
-void  anq_set_plain(struct anq_data *dt, char *plain);
+char *crypto_get_plain(struct crypto_data *dt);
+void  crypto_set_plain(struct crypto_data *dt, char *plain);
 
-void ask_plain_password(struct anq_data *dt);
-int  validate_data(struct anq_data *dt);
+void ask_plain_password(struct crypto_data *dt);
+int  crypto_validate_data(struct crypto_data *dt);
 
 #endif

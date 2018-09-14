@@ -14,8 +14,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct anq_data dt;
-struct anq_ops  op;
+struct crypto_data dt;
+struct crypto_ops  op;
 
 int main(int argc, char *argv[])
 {
@@ -28,15 +28,15 @@ int main(int argc, char *argv[])
 	 * need to change that. */
 	parse(argc, argv);
 
-	err = validate_data(&dt);
+	err = crypto_validate_data(&dt);
 	if(err)
-		goto no_param;
+		goto data_err;
 
 	err = start_ops(&op, &dt);
 
 	return 0;
 
-no_param:
+data_err:
 	print_err_str(err);
 	exit(err);
 }

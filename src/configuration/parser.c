@@ -24,8 +24,8 @@
 		"\nAll rights reserved." \
 		"\n\nhttps://spdx.org/licenses/BSD-3-Clause.html\n"
 
-extern struct anq_data dt;
-extern struct anq_ops  op;
+extern struct crypto_data dt;
+extern struct crypto_ops  op;
 
 int args_help(char *arg, char *value)
 {
@@ -40,13 +40,13 @@ int args_help(char *arg, char *value)
 
 int args_decrypt(char *arg, char *value)
 {
-	anq_set_operation(&dt, ANQ_OP_DECRYPT);
+	crypto_set_operation(&dt, ANQ_OP_DECRYPT);
 	return 0;
 }
 
 int args_encrypt(char *arg, char *value)
 {
-	anq_set_operation(&dt, ANQ_OP_ENCRYPT);
+	crypto_set_operation(&dt, ANQ_OP_ENCRYPT);
 	return 0;
 }
 
@@ -55,7 +55,7 @@ int args_service(char *arg, char *value)
 	if(value[0] == '\0')
 		return ANQ_ERR_NO_SERVICE_VALUE;
 
-	anq_set_service(&dt, value);
+	crypto_set_service(&dt, value);
 	return 0;
 }
 

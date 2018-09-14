@@ -22,9 +22,9 @@ gpgme_ctx_t	    ctx;
 gpgme_engine_info_t eng;
 gpgme_key_t	    keys[2] = { NULL, NULL };
 
-int anq_gpgme_setkey(struct anq_data *dt);
+int anq_gpgme_setkey(struct crypto_data *dt);
 
-int anq_gpgme_init(struct anq_data *dt)
+int anq_gpgme_init(struct crypto_data *dt)
 {
 	gpgme_error_t err = 0;
 
@@ -78,9 +78,9 @@ int anq_gpgme_exit()
 	return 0;
 }
 
-int anq_gpgme_setkey(struct anq_data *dt)
+int anq_gpgme_setkey(struct crypto_data *dt)
 {
-	char *query = anq_get_keyquery(dt);
+	char *query = crypto_get_keyquery(dt);
 
 	assert(ctx   != NULL);
 	assert(query != NULL);
@@ -102,11 +102,11 @@ not_found:
 	exit(ANQ_ERR_NOT_IMPLEMENTED);
 }
 
-int anq_gpgme_write(struct anq_data *dt, gpgme_data_t str)
+int anq_gpgme_write(struct crypto_data *dt, gpgme_data_t str)
 {
 	gpgme_error_t err = 0;
-	char *passd = anq_get_passdir(dt);
-	char *src   = anq_get_service(dt);
+	char *passd = crypto_get_passdir(dt);
+	char *src   = crypto_get_service(dt);
 	char *file  = calloc(strlen(passd) + strlen(src) + 1,
 			     sizeof(char));
 	if(!file)
@@ -133,6 +133,7 @@ int anq_gpgme_write(struct anq_data *dt, gpgme_data_t str)
 		fwrite(buffer, err, 1, fp);
 
 	fclose(fp);
+	free(file);
 
 	return 0;
 
@@ -141,9 +142,9 @@ no_file:
 	exit(ANQ_ERR_NOT_IMPLEMENTED);
 }
 
-int anq_gpgme_encrypt(struct anq_data *dt)
+int anq_gpgme_encrypt(struct crypto_data *dt)
 {
-	char *plain = anq_get_plain(dt);
+	char *plain = crypto_get_plain(dt);
 
 	assert(ctx != NULL);
 	assert(plain != NULL);
@@ -183,13 +184,13 @@ int anq_gpgme_encrypt(struct anq_data *dt)
 	return 0;
 }
 
-int anq_gpgme_decrypt(struct anq_data *dt)
+int anq_gpgme_decrypt(struct crypto_data *dt)
 {
 	assert(ctx != NULL);
 
 	gpgme_error_t err = 0;
-	char *passd = anq_get_passdir(dt);
-	char *srv   = anq_get_service(dt);
+	char *passd = crypto_get_passdir(dt);
+	char *srv   = crypto_get_service(dt);
 	char *file  = calloc(strlen(passd) + strlen(srv) + 1,
 			     sizeof(char));
 	if(!file)
@@ -230,6 +231,8 @@ int anq_gpgme_decrypt(struct anq_data *dt)
 
 	gpgme_data_release(src);
 	gpgme_data_release(dst);
+
+	free(file);
 
 	return 0;
 

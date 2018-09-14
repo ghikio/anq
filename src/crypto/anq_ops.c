@@ -6,6 +6,7 @@
  */
 
 #include "anq_ops.h"
+#include "anq_data.h"
 
 #ifdef ANQ_CRYPTO_LIB_GPGME
 	#include "gpgme/crypto.h"
@@ -13,7 +14,7 @@
 
 #include <assert.h>
 
-void init_ops(struct anq_ops *op)
+void init_ops(struct crypto_ops *op)
 {
 #ifdef ANQ_CRYPTO_LIB_GPGME
 	op->crypto_lib = ANQ_CRYPTO_LIB_GPGME;
@@ -25,7 +26,7 @@ void init_ops(struct anq_ops *op)
 	assert(op->crypto_lib != 0);
 }
 
-int start_ops(struct anq_ops *op, struct anq_data *dt)
+int start_ops(struct crypto_ops *op, struct crypto_data *dt)
 {
 	int err;
 	if(op->crypto_lib == 0)

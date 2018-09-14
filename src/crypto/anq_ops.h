@@ -16,15 +16,15 @@
  * anq_init_ops(). */
 #define ANQ_CRYPTO_LIB_GPGME 1
 
-struct anq_ops {
+struct crypto_ops {
 	int crypto_lib;
 
-	int (*init)    (struct anq_data *);
-	int (*exit)    (struct anq_data *);
-	int (*encrypt) (struct anq_data *);
-	int (*decrypt) (struct anq_data *);
+	int (*init)    (struct crypto_data *);
+	int (*exit)    (struct crypto_data *);
+	int (*encrypt) (struct crypto_data *);
+	int (*decrypt) (struct crypto_data *);
 };
 
-int start_ops(struct anq_ops *op, struct anq_data *dt);
+int start_ops(struct crypto_ops *op, struct crypto_data *dt);
 
 #endif

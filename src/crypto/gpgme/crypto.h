@@ -10,10 +10,10 @@
 
 #include "anq_data.h"
 
-int anq_gpgme_init(struct anq_data *dt);
-int anq_gpgme_exit(struct anq_data *dt);
+int anq_gpgme_init(struct crypto_data *dt);
+int anq_gpgme_exit(struct crypto_data *dt);
 
-int anq_gpgme_encrypt(struct anq_data *dt);
-int anq_gpgme_decrypt(struct anq_data *dt);
+int anq_gpgme_encrypt(struct crypto_data *dt);
+int anq_gpgme_decrypt(struct crypto_data *dt);
 
 #endif
