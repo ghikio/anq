@@ -8,7 +8,7 @@
 #ifndef ANQ_ARGV_PARSER_H
 #define ANQ_ARGV_PARSER_H
 
-/* The trigger, must be called after argv_init and after all the args have
+/* The trigger, must be called after init_args and after all the args have
  * been setted. */
 int parse_argv(int argc, char *argv[]);
 

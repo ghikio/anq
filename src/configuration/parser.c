@@ -67,10 +67,10 @@ void parse(int argc, char *argv[])
 	if(err)
 		goto init_err;
 
-	args_add_arg("-h", args_help); 
-	args_add_arg("-d", args_decrypt);
-	args_add_arg("-e", args_encrypt);
-	args_add_arg("-s", args_service);
+	args_new_arg("-h", args_help); 
+	args_new_arg("-d", args_decrypt);
+	args_new_arg("-e", args_encrypt);
+	args_new_arg("-s", args_service);
 
 	err = parse_argv(argc, argv);
 	if(err)

@@ -46,6 +46,6 @@ short   args_get_argc();
  *
  * parameter:	The new argument. (e.g. -d)
  * fop:		The argument callback function. */
-void args_add_arg(char *arg, argv_fp fop);
+void args_new_arg(char *arg, argv_fp fop);
 
 #endif

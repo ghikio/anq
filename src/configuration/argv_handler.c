@@ -17,8 +17,8 @@ struct args_handler *ah = NULL;
 
 int init_args(void)
 {
-	/* argv_init shouldn't be called more than once. */
-	assert(!ah);
+	/* init_args shouldn't be called more than once. */
+	assert(ah == NULL);
 
 	ah = malloc(sizeof(struct args_handler));
 
@@ -52,7 +52,7 @@ argv_fp args_get_fop(int i)
 	return ah->fops[i];
 }
 
-void args_add_arg(char *arg, argv_fp fp)
+void args_new_arg(char *arg, argv_fp fp)
 {
 	assert(ah != NULL);
 	assert(ah->argc < ARGV_SIZE);
