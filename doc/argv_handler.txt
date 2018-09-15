@@ -1,7 +1,7 @@
 ARGV_HANDLER
 
 CREATED: 2018-07-23
-UPDATED: 2018-07-25
+UPDATED: 2018-09-15
 
 AUTHOR: criw <contact@thecriw.com>
 
@@ -19,7 +19,7 @@ The structure:
 	* fops    - stores the pointer to the argument's callback function. 
 	*
 	* argc    - stores how much arguments have been inserted. */
-	struct s_argv_handler {
+	struct args_handler {
 		char argv[ARGV_SIZE][ARGV_READ_SIZE];
 		argv_fptr fops[ARGV_SIZE];
 
@@ -27,11 +27,16 @@ The structure:
 	};
 
 
-And new arguments should be added using argv_add_argument function,
-argv_add_parameter will automatically allocate memory for the structure:
+Those two internal functions that shouldn't be used outside but are
+used to start and exit the args parse mode.
 
-	void argv_add_parameter(char *arg,
-				argv_fptr fop);
+	void args_init(int argc, char *argv[]);
+	void args_exit();
+
+And new arguments should be added using argv_add_argument function.
+
+	void args_new_arg(char *arg,
+			  argv_fptr fop);
 
 	parameters:
 
@@ -40,21 +45,11 @@ argv_add_parameter will automatically allocate memory for the structure:
 
 	e.g.
 
-	argv_add_parameter("-d", decrypt_function);
-	argv_add_parameter("-e", encrypt_function);
+	args_add_arg("-d", decrypt_function);
+	args_add_arg("-e", encrypt_function);
 
 
 Finally argv_parse from "argv_parser.h" should be called when everything 
 is setted. 
 
-	void argv_parse(int argc, char *argv[]);
-
-argv_parse will exit the program if an error ocurred, this
-behaviour is explained in main.c:
-
-	/* Since the argv handler is the first thing allocated
-	 * by the program, anq_argv_parse will automatically
-	 * exit if a error happens. In the future if something
-	 * needs to be allocated before the argv handler we'll
-	 * need to change that. */
-	anq_argv_parse(argc, argv);
+	void parse_argv(int argc, char *argv[]);
