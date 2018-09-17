@@ -5,6 +5,7 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
+#include "io_utils.h"
 #include "err_codes.h"
 #include "argv_parser.h"
 #include "argv_handler.h"
@@ -13,12 +14,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-/* Slice argv in two parts denoted by the (del)imiter. 
- * First part go into sa and second part into sb.
- *
- * If no delimiter is found, returns ANQ_ERR_NO_DELIMITER,
- * otherwise 0, even if sb ends being NULL. */
-void slice_argv(char *argv, char del, char *sa, char *sb);
 /* Grab the argument sliced (e.g. arga = "-d", argb = "~/home")
  * and check if it coincide with one of our record. */
 int check_argv(char *arga, char *argb);
@@ -77,34 +72,4 @@ int check_argv(char *arga, char *argb)
 	}
 
 	return ANQ_OK;
-}
-
-void slice_argv(char *argv, char del, char *sa, char *sb)
-{
-	int  i = 0;
-	bool found = false;
-
-	/* Keeps searching for the delimiter, if it finds
-	 * the string null character first, return an error
-	 * saying that there is no delimiter. */
-	while(argv[i] != '\0' && !found) {
-		if(argv[i] == del) 
-			found = true;
-		else
-			sa[i] = argv[i];
-
-		i++;
-	}
-	sa[i] = '\0';
-
-	if(found == false)
-		return;
-
-	int n = 0;
-	while(argv[i] != '\0') {
-		sb[n] = argv[i];
-		n++;
-		i++;
-	}
-	sb[n + 1] = '\0';
 }
