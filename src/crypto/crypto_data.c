@@ -96,15 +96,13 @@ int crypto_validate_data(struct crypto_data *dt)
 	if(dt->svc[0] == '\0')
 		return ANQ_ERR_NO_SERVICE;
 
-	char *key = getenv("ANQ_KEYQUERY");
-	if(key == NULL)
+	char *kq = crypto_get_keyquery(dt);
+	if(kq == NULL)
 		return ANQ_ERR_NO_KEYQUERY;
-	crypto_set_keyquery(dt, key);
 
-	char *passd = getenv("ANQ_PASSDIR");
-	if(passd == NULL)
+	char *pd = crypto_get_passdir(dt);
+	if(pd == NULL)
 		return ANQ_ERR_NO_PASSDIR;
-	crypto_set_passdir(dt, passd);
 
 	if(dt->op == ANQ_OP_ENCRYPT) {
 		ask_plain_password(dt);

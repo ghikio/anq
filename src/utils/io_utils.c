@@ -44,8 +44,8 @@ void slice_argv(char *argv, char del, char *sa, char *sb)
 	bool found = false;
 
 	/* Keeps searching for the delimiter, if it finds
-	 * the string null character first, return an error
-	 * saying that there is no delimiter. */
+	 * the string null character first, return saying 
+	 * that there is no delimiter. */
 	while(argv[i] != '\0' && !found) {
 		if(argv[i] == del) {
 			found = true;
@@ -66,5 +66,8 @@ void slice_argv(char *argv, char del, char *sa, char *sb)
 		n++;
 		i++;
 	}
-	sb[n + 1] = '\0';
+	if(sb[n-1] == '\n')
+		sb[n-1] = '\0';
+	else
+		sb[n] = '\0';
 }

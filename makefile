@@ -2,7 +2,7 @@ CC=clang
 
 CCFLAGS=-std=c11 -g -Wall
 LDFLAGS=
-IFLAGS=-Isrc -Isrc/configuration -Isrc/crypto
+IFLAGS=-Isrc -Isrc/configuration -Isrc/crypto -Isrc/utils
 DEFINES=
 
 CCFLAGS+=$(DEFINES)
@@ -17,6 +17,7 @@ SRC_DIR=src
 OBJS=src/main.o \
      src/err_codes.o
 
+include src/utils/make.config
 include src/crypto/make.config
 include src/configuration/make.config
 

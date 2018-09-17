@@ -8,6 +8,8 @@
 #ifndef ANQ_CONFIGURATION_CONFIGURATIONPARSER_H
 #define ANQ_CONFIGURATION_CONFIGURATIONPARSER_H
 
-void parse();
+#define ANQ_ENVVAR_SIZE 255
+
+int parse_config();
 
 #endif

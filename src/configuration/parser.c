@@ -11,7 +11,7 @@
 #include "crypto_data.h"
 #include "argv_parser.h"
 #include "argv_handler.h"
-#include "configuration_parser.h"
+#include "config_parser.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +76,7 @@ void parse(int argc, char *argv[])
 	if(err)
 		goto parse_err;
 
-	//parse_configuration();
+	parse_config();
 
 	return;
 
