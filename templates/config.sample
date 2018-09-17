@@ -1,0 +1,13 @@
+# This file must be placed in ${XDG_CONFIG_HOME}/anq/config
+# Remove all the comments before executing the program since
+# at least at the current dev branch 3d963ec3 it doesn't
+# ignore comments nor empty files.
+
+# Specifies the name of the GPG key and filters key results by
+# it. Key must not be expired since at least at the current dev
+# branch 3d963ec3 it doesn't report expired key as error.
+ANQ_KEY_NAME=key_name
+
+# Specifies the directory where encrypted files will reside.
+ANQ_PASSPATH=${HOME}/.anqpass/
+
