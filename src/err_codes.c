@@ -43,7 +43,7 @@ char *err_to_str(int err)
 			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_KEYQUERY:
-		strncpy(str, "ERR: ANQ_KEYQUERY environment variable not found.\n",
+		strncpy(str, "ERR: ANQ_KEY_NAME config variable not found, take a look at the configuration sample file.\n",
 			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_PASSWORD:
@@ -51,9 +51,12 @@ char *err_to_str(int err)
 			ANQ_ERR_SIZE);
 		break;
 	case ANQ_ERR_NO_PASSDIR:
-		strncpy(str, "ERR: ANQ_PASSDIR environment variable is not set.\n",
+		strncpy(str, "ERR: ANQ_PASSPATH config variable is not set, take a look at the configuration sample file.\n",
 			ANQ_ERR_SIZE);
 		break;
+	case ANQ_ERR_INVALID_CONF:
+		strncpy(str, "ERR: Couldn't parse the configuration file correctly. Ensure the directory and the config file exist and the configuration inside is correct.\n",
+			ANQ_ERR_SIZE);
 	default:
 		str[0] = '\0';
 		break;

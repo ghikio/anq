@@ -5,9 +5,8 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
-// TODO [criw hp] comment this file.
-
 #include "io_utils.h"
+#include "err_codes.h"
 #include "crypto_data.h"
 #include "config_parser.h"
 
@@ -18,13 +17,20 @@
 #include <assert.h>
 #include <sys/wait.h>
 
+/* Directory created at XDG_CONFIG_HOME for anq. */
 #define CONFIG_DIR_NAME  "anq"
+/* Readable configuration file at CONFIG_DIR_NAME. */
 #define CONFIG_FILE_NAME "config"
 
 extern struct crypto_data dt;
 
-char *get_config_file();
-void  set_option(char *opt, char *val);
+/* If opt is valid, set val in the associated crypto_data
+ * field. Otherwise does nothing. */
+void set_option(char *opt, char *val);
+/* Dinamically build the path for the configuration file based
+ * on the env var XDG_CONFIG_HOME, which points to the user's
+ * configuration personal directory. */
+char *get_config_file(void);
 
 int parse_config()
 {
@@ -44,22 +50,20 @@ int parse_config()
 		slice_argv(buf, '=', opt, val);
 		if(opt[0] == '\0' || val[0] == '\0')
 			goto conf_err;
-		printf("opt: %s\nval: %s\n", opt, val);
 		
 		set_option(opt, val);
 	}
 
+	fclose(fp);
 	free(file);
 
 	return 0;
 conf_err:
-	// TODO [criw hp] add err code for this
-	exit(32);
+	fclose(fp);
 nfile_err:
 	free(file);
 nname_err:
-	// TODO [criw hp] add err code for this
-	return 99;
+	return ANQ_ERR_INVALID_CONF;
 }
 
 void set_option(char *opt, char *val)
@@ -77,7 +81,7 @@ void set_option(char *opt, char *val)
 		crypto_set_passdir(&dt, val);
 }
 
-char *get_config_file()
+char *get_config_file(void)
 {
 	char *cftdir = getenv("XDG_CONFIG_HOME");
 	if(!cftdir)

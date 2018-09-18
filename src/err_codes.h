@@ -22,12 +22,16 @@ enum anq_err_codes {
 	ANQ_ERR_NO_SERVICE		= 101,
 	/* Parameter -s requires a value and hasn't one. */
 	ANQ_ERR_NO_SERVICE_VALUE	= 102,
-	/* env variable ANQ_KEYQUERY required and not found. */
+	/* conf variable ANQ_KEY_NAME required and not found. */
 	ANQ_ERR_NO_KEYQUERY		= 103,
 	/* A null password was inserted when asking. */
 	ANQ_ERR_NO_PASSWORD		= 104,
-	/* env variable ANQ_PASSDIR required and not found. */
+	/* conf variable ANQ_PASSPATH required and not found. */
 	ANQ_ERR_NO_PASSDIR		= 105,
+	/* configuration file couldn't be correctly parsed. */
+	ANQ_ERR_INVALID_CONF		= 106,
+	/* Denote the execution of the help menu. */
+	ANQ_ERR_HELP_MENU		= 107,
 	// Returned for not implemented features.
 	ANQ_ERR_NOT_IMPLEMENTED		= 127,
 };

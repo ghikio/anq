@@ -16,6 +16,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern struct crypto_data dt;
+extern struct crypto_ops  op;
+
+/* Maybe not the best place for these constants, but since they're
+ * not yet needed anywhere else in the program, we'll secretly
+ * keep them here ;) */
 #define NAME	"ANQ"
 #define AUTHOR  "Vitor Fernandes <contact@thecriw.com>"
 #define VERSION "v0.0.1"
@@ -23,9 +29,6 @@
 		"\nCopyright (c) 2018, Vitor Flavio Fernandes Ferreira" \
 		"\nAll rights reserved." \
 		"\n\nhttps://spdx.org/licenses/BSD-3-Clause.html\n"
-
-extern struct crypto_data dt;
-extern struct crypto_ops  op;
 
 int args_help(char *arg, char *value)
 {
@@ -35,7 +38,7 @@ int args_help(char *arg, char *value)
 	puts("-e - encrypt password");
 	puts("-s - password's service name");
 
-	return 0;
+	return ANQ_ERR_HELP_MENU;
 }
 
 int args_decrypt(char *arg, char *value)
