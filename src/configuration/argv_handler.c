@@ -26,7 +26,7 @@ int init_args(void)
 		return ANQ_ERR_UNALLOCATED_MEMORY;
 
 	ah->argc = 0;
-	return ANQ_OK;
+	return 0;
 }
 
 void exit_args(void)

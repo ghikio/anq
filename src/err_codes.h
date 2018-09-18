@@ -11,8 +11,6 @@
 #define ANQ_ERR_SIZE 124
 
 enum anq_err_codes {
-	ANQ_OK = 0,
-
 	/* Returned if a malloc() or similar hasn't been able to
 	 * allocate memory */
 	ANQ_ERR_UNALLOCATED_MEMORY	= 1,

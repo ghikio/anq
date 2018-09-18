@@ -70,6 +70,5 @@ int check_argv(char *arga, char *argb)
 		}
 	}
 
-	// TODO [criw mp] Change all the ANQ_OK back to 0.
-	return ANQ_OK;
+	return 0;
 }
