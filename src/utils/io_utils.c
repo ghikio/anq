@@ -28,7 +28,6 @@ char *make_filename(char *path, char *file)
 	char *filename = calloc(strlen(path) + strlen(file) + 1,
 				sizeof(char));
 	if(!filename)
-		// TODO [criw hp] create err for this
 		return NULL;
 
 	strcpy(filename, path);
