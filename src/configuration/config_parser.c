@@ -8,7 +8,6 @@
 #include "io_utils.h"
 #include "err_codes.h"
 #include "crypto_data.h"
-#include "config_parser.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -42,9 +41,9 @@ int parse_config()
 	if((fp = fopen(file, "rt")) == NULL)
 		goto nfile_err;
 
-	char buf[ANQ_ENVVAR_SIZE];
-	char opt[ANQ_ENVVAR_SIZE];
-	char val[ANQ_ENVVAR_SIZE];
+	char buf[INPUT_SIZE];
+	char opt[INPUT_SIZE];
+	char val[INPUT_SIZE];
 
 	while(fgets(buf, sizeof(buf) + 1, fp)) {
 		slice_argv(buf, '=', opt, val);
@@ -73,10 +72,10 @@ void set_option(char *opt, char *val)
 
 	int err;
 
-	if((err = strncmp(opt, "ANQ_KEY_NAME", ANQ_ENVVAR_SIZE))
+	if((err = strncmp(opt, "ANQ_KEY_NAME", INPUT_SIZE))
 			== 0)
 		crypto_set_keyquery(&dt, val);
-	else if((err = strncmp(opt, "ANQ_PASSPATH", ANQ_ENVVAR_SIZE))
+	else if((err = strncmp(opt, "ANQ_PASSPATH", INPUT_SIZE))
 			== 0)
 		crypto_set_passdir(&dt, val);
 }
@@ -87,8 +86,8 @@ char *get_config_file(void)
 	if(!cftdir)
 		goto exit_err;
 
-	char cfdir[ANQ_ENVVAR_SIZE];
-	strncpy(cfdir, cftdir, ANQ_ENVVAR_SIZE);
+	char cfdir[INPUT_SIZE];
+	strncpy(cfdir, cftdir, INPUT_SIZE);
 
 	char *cfpath = make_filename(cfdir,  CONFIG_DIR_NAME);
 	if(!cfpath)

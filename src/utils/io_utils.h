@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 
+bool  check_dir_exists(char *f);
 bool  check_file_access(char* f, int mode);
 char *make_filename(char *path, char *file);
 /* Slice argv in two parts denoted by the (del)imiter. 

@@ -5,6 +5,7 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
+#include "io_utils.h"
 #include "err_codes.h"
 #include "crypto_data.h"
 
@@ -37,7 +38,7 @@ char *crypto_get_keyquery(struct crypto_data *dt)
 void crypto_set_keyquery(struct crypto_data *dt, char *query)
 {
 	assert(query != NULL);
-	strncpy(dt->key, query, ARGV_READ_SIZE);
+	strncpy(dt->key, query, INPUT_SIZE);
 }
 
 char *crypto_get_service(struct crypto_data *dt)
@@ -48,7 +49,7 @@ char *crypto_get_service(struct crypto_data *dt)
 void crypto_set_service(struct crypto_data *dt, char *svc)
 {
 	assert(svc != NULL);
-	strncpy(dt->svc, svc, ARGV_READ_SIZE);
+	strncpy(dt->svc, svc, INPUT_SIZE);
 }
 
 char *crypto_get_passdir(struct crypto_data *dt)
@@ -58,7 +59,7 @@ char *crypto_get_passdir(struct crypto_data *dt)
 
 void crypto_set_passdir(struct crypto_data *dt, char *passd)
 {
-	strncpy(dt->passd, passd, ARGV_READ_SIZE);
+	strncpy(dt->passd, passd, INPUT_SIZE);
 }
 
 char *crypto_get_plain(struct crypto_data *dt)
@@ -68,10 +69,9 @@ char *crypto_get_plain(struct crypto_data *dt)
 
 void crypto_set_plain(struct crypto_data *dt, char *plain)
 {
-	strncpy(dt->plain, plain, ARGV_READ_SIZE);
+	strncpy(dt->plain, plain, INPUT_SIZE);
 }
 
-// TODO [criw mp] comment this up a little
 void ask_plain_password(struct crypto_data *dt)
 {
 	static struct termios oterm;
@@ -80,14 +80,16 @@ void ask_plain_password(struct crypto_data *dt)
 	tcgetattr(STDIN_FILENO, &oterm);
 
 	nterm = oterm;
+	/* Disable ECHO (displaying input) for the new term
+	 * and set nterm as the actual terminal. */
 	nterm.c_lflag &= ~(ECHO);
-
 	tcsetattr(STDIN_FILENO, TCSANOW, &nterm);
 
-	//printf("Introduce password: ");
-	if(fgets(dt->plain, ARGV_READ_SIZE, stdin) == NULL)
+	printf("Introduce password: ");
+	if(fgets(dt->plain, INPUT_SIZE, stdin) == NULL)
 		dt->plain[0] = '\0';
 
+	// Goes back to the old terminal.
 	tcsetattr(STDIN_FILENO, TCSANOW, &oterm);
 }
 
@@ -101,7 +103,7 @@ int crypto_validate_data(struct crypto_data *dt)
 		return ANQ_ERR_NO_KEYQUERY;
 
 	char *pd = crypto_get_passdir(dt);
-	if(pd == NULL)
+	if(pd == NULL || !check_dir_exists(pd))
 		return ANQ_ERR_NO_PASSDIR;
 
 	if(dt->op == ANQ_OP_ENCRYPT) {

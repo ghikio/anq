@@ -8,8 +8,7 @@
 #ifndef ANQ_CRYPTO_ANQDATA_H
 #define ANQ_CRYPTO_ANQDATA_H
 
-#include "argv_handler.h"
-
+#define INPUT_SIZE  124
 #define CYPHER_SIZE 1024
 
 /* Represent the way the program will act based
@@ -33,10 +32,10 @@ enum op {
  * plain  - Stores the plain password. */
 struct crypto_data {
 	enum op op;
-	char svc[ARGV_READ_SIZE];
-	char passd[ARGV_READ_SIZE];
-	char key[ARGV_READ_SIZE];
-	char plain[ARGV_READ_SIZE];
+	char svc[INPUT_SIZE];
+	char passd[INPUT_SIZE];
+	char key[INPUT_SIZE];
+	char plain[INPUT_SIZE];
 };
 
 enum op crypto_get_operation(struct crypto_data *dt);

@@ -11,6 +11,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <dirent.h>
+
+bool check_dir_exists(char *f)
+{
+	assert(f != NULL);
+
+	DIR *dp;
+	if(access(f, F_OK) != 0 || (dp = opendir(f)) != NULL) {
+		return false;
+	}
+
+	closedir(dp);
+	return true;
+}
 
 bool check_file_access(char* f, int mode)
 {
