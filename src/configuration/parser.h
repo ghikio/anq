@@ -15,6 +15,6 @@
  * If an error occurs it stops the program, since if the
  * parsing fails, the data collected is not ensured to be the
  * one wanted. */
-void parse(int argc, char *argv[]);
+int parse(int argc, char *argv[]);
 
 #endif

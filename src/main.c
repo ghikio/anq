@@ -21,16 +21,18 @@ int main(int argc, char *argv[])
 {
 	int err;
 
-	parse(argc, argv);
+	err = parse(argc, argv);
+	if(err)
+		goto err;
 	err = crypto_validate_data(&dt);
 	if(err)
-		goto data_err;
+		goto err;
 
 	err = start_ops(&op, &dt);
 
 	return 0;
 
-data_err:
+err:
 	print_err_str(err);
-	exit(err);
+	return err;
 }

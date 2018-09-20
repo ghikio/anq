@@ -18,7 +18,7 @@
 extern struct crypto_data dt;
 extern struct crypto_ops  op;
 
-void parse(int argc, char *argv[])
+int parse(int argc, char *argv[])
 {
 	int err;
 
@@ -26,11 +26,12 @@ void parse(int argc, char *argv[])
 	if(err)
 		goto parse_err;
 
-	parse_config();
+	err = parse_config();
+	if(err)
+		goto parse_err;
 
-	return;
+	return 0;
 
 parse_err:
-	print_err_str(err);
-	exit(err);
+	return err;
 }
