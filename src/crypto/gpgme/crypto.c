@@ -6,6 +6,7 @@
  */
 
 #include "crypto.h"
+#include "io_utils.h"
 #include "err_codes.h"
 #include "crypto_data.h"
 
@@ -44,31 +45,40 @@ int anq_gpgme_init(struct crypto_data *dt)
 			 setlocale(LC_MESSAGES, NULL));
 #endif
 
-	if((err = gpgme_engine_check_version(GPGME_PROTOCOL_OpenPGP)) != GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement engine check error
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+	/* To have access to crypto operations, we need to define a
+	 * cryptographic protocol. GPGME implements the backend for us
+	 * so we'll just check if it's installed and accessible. */
+	if((err = gpgme_engine_check_version(GPGME_PROTOCOL_OpenPGP)) 
+			!= GPG_ERR_NO_ERROR)
+		return ANQ_ERR_NO_OPENGPG_PROTOCOL;
 
 	if((err = gpgme_get_engine_info(&eng)) 
-			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement get engine info err
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+			!= GPG_ERR_NO_ERROR) {
+		return ANQ_ERR_UNALLOCATED_MEMORY;
+	}
 
-	if((err = gpgme_new(&ctx)) != GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement new context err
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+	if((err = gpgme_new(&ctx)) != GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE);
+		assert(err != GPG_ERR_NOT_OPERATIONAL);
+		assert(err != GPG_ERR_SELFTEST_FAILED);
+
+		return ANQ_ERR_UNALLOCATED_MEMORY;
+	}
 
 	if((err = gpgme_set_protocol(ctx, GPGME_PROTOCOL_OpenPGP))
-			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement set protocol err
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+			!= GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE);
+		return ANQ_ERR_UNALLOCATED_MEMORY;
+	}
 
 	if((err = gpgme_ctx_set_engine_info(ctx, GPGME_PROTOCOL_OpenPGP,
 					    eng->file_name, eng->home_dir))
 			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement set engine info err
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+		return ANQ_ERR_UNALLOCATED_MEMORY;
 
-	anq_gpgme_setkey(dt);
+	if((err = anq_gpgme_setkey(dt)) != 0)
+		return err;
+
 	return 0;
 }
 
@@ -98,35 +108,29 @@ int anq_gpgme_setkey(struct crypto_data *dt)
 	return 0;
 
 not_found:
-	// TODO [criw hp] implement key not found
-	exit(ANQ_ERR_NOT_IMPLEMENTED);
+	return ANQ_ERR_CRYPTO_KEY_NOT_FOUND;
 }
 
 int anq_gpgme_write(struct crypto_data *dt, gpgme_data_t str)
 {
 	gpgme_error_t err = 0;
+
 	char *passd = crypto_get_passdir(dt);
 	char *src   = crypto_get_service(dt);
-	char *file  = calloc(strlen(passd) + strlen(src) + 1,
-			     sizeof(char));
+	char *file  = make_filename(passd, src);
 	if(!file)
-		goto no_file;
-
-	strcpy(file, passd);
-	strcat(file, "/");
-	strcat(file, src);
+		goto mem_err;
 
 	FILE *fp;
 	fp = fopen(file, "w");
 	if(!fp)
-		goto no_file;
+		goto nfile_err;
 
 	char buffer[CYPHER_SIZE];
 
 	err = gpgme_data_seek(str, 0, SEEK_SET);
 	if(err)
-		// TODO [criw hp] implement
-		goto no_file;
+		goto seek_err;
 
 	while((err = gpgme_data_read(str, buffer, CYPHER_SIZE))
 			> 0)
@@ -137,9 +141,13 @@ int anq_gpgme_write(struct crypto_data *dt, gpgme_data_t str)
 
 	return 0;
 
-no_file:
-	// TODO [criw hp] implement
-	exit(ANQ_ERR_NOT_IMPLEMENTED);
+seek_err:
+	perror("crypto");
+	fclose(fp);
+nfile_err:
+	free(file);
+mem_err:
+	return err;
 }
 
 int anq_gpgme_encrypt(struct crypto_data *dt)
@@ -159,29 +167,51 @@ int anq_gpgme_encrypt(struct crypto_data *dt)
 	 * crypto engine. */
 	if((err = gpgme_data_new_from_mem(&src, plain,
 					  strlen(plain), 1))
-			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement set data error
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+			!= GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE);
 
-	if((err = gpgme_data_new(&dst)) != GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement set data error
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+		err = ANQ_ERR_UNALLOCATED_MEMORY;
+		goto src_mem_err;
+	}
+
+	if((err = gpgme_data_new(&dst)) != GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE);
+
+		err = ANQ_ERR_UNALLOCATED_MEMORY;
+		goto dst_mem_err;
+	}
 
 	if((err = gpgme_op_encrypt(ctx, keys,
 				   GPGME_ENCRYPT_NO_ENCRYPT_TO,
 				   src, dst))
-			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement encrypt err
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+			!= GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE);
+		assert(err != GPG_ERR_BAD_PASSPHRASE);
+
+		if(err == GPG_ERR_UNUSABLE_PUBKEY)
+			err = ANQ_ERR_CRYPTO_KEY_UNUSABLE;
+		else
+			err = ANQ_ERR_CRYPTO_ENCRYPT_ERR;
+
+		goto encrypt_err;
+	}
 
 	gpgme_data_set_encoding(dst, GPGME_DATA_ENCODING_BINARY);
 
-	anq_gpgme_write(dt, dst);
+	err = anq_gpgme_write(dt, dst);
+	if(err)
+		goto encrypt_err;
 
 	gpgme_data_release(src);
 	gpgme_data_release(dst);
 
 	return 0;
+encrypt_err:
+	gpgme_data_release(dst);
+dst_mem_err:
+	gpgme_data_release(src);
+src_mem_err:
+	return err;
 }
 
 int anq_gpgme_decrypt(struct crypto_data *dt)
@@ -191,39 +221,40 @@ int anq_gpgme_decrypt(struct crypto_data *dt)
 	gpgme_error_t err = 0;
 	char *passd = crypto_get_passdir(dt);
 	char *srv   = crypto_get_service(dt);
-	char *file  = calloc(strlen(passd) + strlen(srv) + 1,
-			     sizeof(char));
+	char *file  = make_filename(passd, srv);
 	if(!file)
-		goto no_file;
-
-	strcpy(file, passd);
-	strcat(file, "/");
-	strcat(file, srv);
+		goto nfile_err;
 
 	gpgme_data_t src;
 	gpgme_data_t dst;
 
 	if((err = gpgme_data_new_from_file(&src, file, 1))
-			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement set data error 
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+			!= GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE); 
+		assert(err != GPG_ERR_NOT_IMPLEMENTED); 
 
-	if((err = gpgme_data_new(&dst)) != GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement set data error 
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+		err = ANQ_ERR_UNALLOCATED_MEMORY;
+		goto src_mem_err;
+	}
+
+	if((err = gpgme_data_new(&dst)) != GPG_ERR_NO_ERROR) {
+		err = ANQ_ERR_UNALLOCATED_MEMORY;
+		goto dst_mem_err;
+	}
 
 	if((err = gpgme_op_decrypt(ctx, src, dst)) 
-			!= GPG_ERR_NO_ERROR)
-		// TODO [criw hp] implement decrypt error
-		exit(ANQ_ERR_NOT_IMPLEMENTED);
+			!= GPG_ERR_NO_ERROR) {
+		assert(err != GPG_ERR_INV_VALUE);
 
+		err = ANQ_ERR_CRYPTO_DECRYPT_ERR;
+		goto decrypt_err;
+	}
 
 	char buffer[CYPHER_SIZE];
 
 	err = gpgme_data_seek(dst, 0, SEEK_SET);
 	if(err)
-		// TODO [criw hp] Implement seek error
-		exit(1);
+		goto seek_err;
 
 	while((err = gpgme_data_read(dst, buffer, CYPHER_SIZE)) 
 			> 0)
@@ -236,7 +267,14 @@ int anq_gpgme_decrypt(struct crypto_data *dt)
 
 	return 0;
 
-no_file:
-	// TODO [criw hp] implement
-	exit(ANQ_ERR_NOT_IMPLEMENTED);
+seek_err:
+	perror("crypto");
+decrypt_err:
+	gpgme_data_release(dst);
+dst_mem_err:
+	gpgme_data_release(src);
+src_mem_err:
+	free(file);
+nfile_err:
+	return err;
 }

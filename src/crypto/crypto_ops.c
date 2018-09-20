@@ -51,6 +51,5 @@ int start_ops(struct crypto_ops *op, struct crypto_data *dt)
 	return 0;
 
 enc_err:
-	// TODO [criw hp] implement the actual error handling
 	return err;
 }

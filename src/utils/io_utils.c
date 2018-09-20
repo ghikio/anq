@@ -18,7 +18,7 @@ bool check_dir_exists(char *f)
 	assert(f != NULL);
 
 	DIR *dp;
-	if(access(f, F_OK) != 0 || (dp = opendir(f)) != NULL) {
+	if(access(f, F_OK) != 0 || (dp = opendir(f)) == NULL) {
 		return false;
 	}
 

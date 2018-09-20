@@ -57,6 +57,31 @@ char *err_to_str(int err)
 	case ANQ_ERR_INVALID_CONF:
 		strncpy(str, "ERR: Couldn't parse the configuration file correctly. Ensure the directory and the config file exist and the configuration inside is correct.\n",
 			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_DECRYPT_NO_SERVICE:
+		strncpy(str, "ERR: Service doesn't exist in ANQ_PASSPATH.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_CRYPTO_KEY_NOT_FOUND:
+		strncpy(str, "ERR: ANQ_KEY_NAME supplied in the configuration doesn't exist.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_CRYPTO_KEY_UNUSABLE:
+		strncpy(str, "ERR: ANQ_KEY_NAME invalid. Ensure the key has not expired.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_CRYPTO_ENCRYPT_WRITE:
+		strncpy(str, "Couldn't create or write your encrypted password to a file, check ANQ_PASSPATH and make sure you have enough permissions.\n",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_CRYPTO_ENCRYPT_ERR:
+		strncpy(str, "A General error ocurred while encrypting the password. Sorry I don't have much more information, It would be nice if you could fill a issue at https://trac.thecriw.com/\n.",
+			ANQ_ERR_SIZE);
+		break;
+	case ANQ_ERR_CRYPTO_DECRYPT_ERR:
+		strncpy(str, "A General error ocurred while dencrypting the password. Sorry I don't have much more information, It would be nice if you could fill a issue at https://trac.thecriw.com/.\n",
+			ANQ_ERR_SIZE);
+		break;
 	default:
 		str[0] = '\0';
 		break;

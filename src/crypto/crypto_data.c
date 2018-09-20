@@ -103,14 +103,23 @@ int crypto_validate_data(struct crypto_data *dt)
 		return ANQ_ERR_NO_KEYQUERY;
 
 	char *pd = crypto_get_passdir(dt);
+//if(pd == NULL || !check_dir_exists(pd))
 	if(pd == NULL || !check_dir_exists(pd))
 		return ANQ_ERR_NO_PASSDIR;
 
-	if(dt->op == ANQ_OP_ENCRYPT) {
+	char *file = make_filename(pd, dt->svc);
+
+	switch(dt->op) {
+	case ANQ_OP_ENCRYPT:
 		ask_plain_password(dt);
 
 		if(dt->plain[0] == '\0')
 			return ANQ_ERR_NO_PASSWORD;
+		break;
+	case ANQ_OP_DECRYPT:
+		if(!check_file_access(file, F_OK)) {
+			return ANQ_ERR_DECRYPT_NO_SERVICE;
+		}
 	}
 
 	return 0;
