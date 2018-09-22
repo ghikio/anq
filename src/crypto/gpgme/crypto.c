@@ -82,7 +82,7 @@ int anq_gpgme_init(struct crypto_data *dt)
 	return 0;
 }
 
-int anq_gpgme_exit()
+int anq_gpgme_exit(struct crypto_data *dt)
 {
 	gpgme_release(ctx);
 	return 0;
@@ -122,7 +122,7 @@ int anq_gpgme_write(struct crypto_data *dt, gpgme_data_t str)
 		goto mem_err;
 
 	FILE *fp;
-	fp = fopen(file, "w");
+	fp = fopen(file, "wb");
 	if(!fp)
 		goto nfile_err;
 
