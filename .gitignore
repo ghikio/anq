@@ -1,2 +1,16 @@
-bin/
 *.o
+*.log
+bin/
+usr/
+tmp/
+build/
+
+anq
+*.scan
+config.h
+stamp-h1
+Makefile
+config.status
+.dirstamp
+.deps/
+autom4te.cache/
