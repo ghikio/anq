@@ -45,6 +45,11 @@ int parse_argv(int argc, char *argv[])
 			goto del_err;
 	}
 
+	free(argb);
+	free(arga);
+
+	return 0;
+
 del_err:
 	free(argb);
 argb_err:
