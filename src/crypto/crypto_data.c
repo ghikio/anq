@@ -95,6 +95,8 @@ void ask_plain_password(struct crypto_data *dt)
 
 int crypto_validate_data(struct crypto_data *dt)
 {
+	int err;
+
 	if(dt->svc[0] == '\0')
 		return ANQ_ERR_NO_SERVICE;
 
@@ -103,7 +105,6 @@ int crypto_validate_data(struct crypto_data *dt)
 		return ANQ_ERR_NO_KEYQUERY;
 
 	char *pd = crypto_get_passdir(dt);
-//if(pd == NULL || !check_dir_exists(pd))
 	if(pd == NULL || !check_dir_exists(pd))
 		return ANQ_ERR_NO_PASSDIR;
 
@@ -113,15 +114,24 @@ int crypto_validate_data(struct crypto_data *dt)
 	case ANQ_OP_ENCRYPT:
 		ask_plain_password(dt);
 
-		if(dt->plain[0] == '\0')
-			return ANQ_ERR_NO_PASSWORD;
+		if(dt->plain[0] == '\0') {
+			err = ANQ_ERR_NO_PASSWORD;
+			goto err;
+		}
 		break;
 	case ANQ_OP_DECRYPT:
 		if(!check_file_access(file, F_OK)) {
-			return ANQ_ERR_DECRYPT_NO_SERVICE;
+			err = ANQ_ERR_DECRYPT_NO_SERVICE;
+			goto err;
 		}
+		break;
 	}
 
+	free(file);
 	return 0;
+
+err:
+	free(file);
+	return err;
 }
 

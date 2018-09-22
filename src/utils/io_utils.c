@@ -39,7 +39,7 @@ char *make_filename(char *path, char *file)
 	assert(path != NULL);
 	assert(file != NULL);
 
-	char *filename = calloc(strlen(path) + strlen(file) + 1,
+	char *filename = calloc(strlen(path) + strlen(file) + 2,
 				sizeof(char));
 	if(!filename)
 		return NULL;
