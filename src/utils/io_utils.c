@@ -7,18 +7,19 @@
 
 #include "io_utils.h"
 
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <dirent.h>
 
-bool check_dir_exists(char *f)
+bool check_dir_exists(char *d)
 {
-	assert(f != NULL);
+	assert(d != NULL);
 
 	DIR *dp;
-	if(access(f, F_OK) != 0 || (dp = opendir(f)) == NULL) {
+	if(access(d, F_OK) != 0 || (dp = opendir(d)) == NULL) {
 		return false;
 	}
 
@@ -32,6 +33,30 @@ bool check_file_access(char* f, int mode)
 	assert(mode == R_OK || mode == W_OK || mode == X_OK || mode == F_OK);
 
 	return (access(f, mode) == 0);
+}
+
+int list_dir(char *d)
+{
+	assert(d != NULL);
+
+	if(!check_dir_exists(d))
+		return -1;
+
+	DIR *dp;
+	struct dirent *ent;
+	if((dp = opendir(d)) == NULL) {
+		return -1;
+	}
+
+	printf("== %s ==\n", d);
+	while((ent = readdir(dp)) != NULL) {
+		if(strncmp(ent->d_name, ".", 255) != 0 
+				&& strncmp(ent->d_name, "..", 255) != 0)
+			printf (">> %s\n", ent->d_name);
+	}
+
+	closedir(dp);
+	return 0;
 }
 
 char *make_filename(char *path, char *file)

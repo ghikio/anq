@@ -5,6 +5,7 @@
  *  https://spdx.org/licenses/BSD-3-Clause.html
  */
 
+#include "io_utils.h"
 #include "crypto_ops.h"
 #include "crypto_data.h"
 
@@ -34,15 +35,20 @@ int start_ops(struct crypto_ops *op, struct crypto_data *dt)
 	err = op->init(dt);
 
 	switch(dt->op) {
+	case ANQ_OP_LIST:
+		err = list_dir(dt->passd);
+		if(err)
+			goto err;
+		break;
 	case ANQ_OP_ENCRYPT:
 		err = op->encrypt(dt);
 		if(err)
-			goto enc_err;
+			goto err;
 		break;
 	case ANQ_OP_DECRYPT:
 		err = op->decrypt(dt);
-		break;
-	default:
+		if(err)
+			goto err;
 		break;
 	}
 
@@ -50,6 +56,6 @@ int start_ops(struct crypto_ops *op, struct crypto_data *dt)
 
 	return 0;
 
-enc_err:
+err:
 	return err;
 }

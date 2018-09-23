@@ -36,6 +36,9 @@ int parse_argv(int argc, char *argv[])
 		goto argb_err;
 	}
 
+	if(argc == 1)
+		set_arg("-h", NULL);
+
 	/* Start at 1 so we don't parse the program name. */
 	for(int i = 1; i < argc; i++) {
 		slice_argv(argv[i], '=', arga, argb);
@@ -72,7 +75,9 @@ arga_err:
 
 int set_arg(char *arg, char *val)
 {
-	if(strncmp(arg, "-d", INPUT_SIZE) == 0) {
+	if(strncmp(arg, "-l", INPUT_SIZE) == 0) {
+		crypto_set_operation(&dt, ANQ_OP_LIST);
+	} else if(strncmp(arg, "-d", INPUT_SIZE) == 0) {
 		crypto_set_operation(&dt, ANQ_OP_DECRYPT);
 	} else if(strncmp(arg, "-e", INPUT_SIZE) == 0) {
 		crypto_set_operation(&dt, ANQ_OP_ENCRYPT);
@@ -81,10 +86,15 @@ int set_arg(char *arg, char *val)
 			return ANQ_ERR_NO_SERVICE_VALUE;
 
 		crypto_set_service(&dt, val);
+	} else if(strncmp(arg, "-v", INPUT_SIZE) == 0) {
+		printf("version: %s\n", VERSION);
+		return ANQ_ERR_HELP_MENU;
 	} else if(strncmp(arg, "-h", INPUT_SIZE) == 0) {
 		printf("%s - %s\n%s\n\n%s\n", NAME, VERSION, 
 		       AUTHOR, LICENSE);
+		puts("-v - print version");
 		puts("-h - print help menu");
+		puts("-l - list passwords");
 		puts("-d - decrypt password");
 		puts("-e - encrypt password");
 		puts("-s - password's service name");

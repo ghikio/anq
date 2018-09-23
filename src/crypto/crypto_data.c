@@ -97,9 +97,6 @@ int crypto_validate_data(struct crypto_data *dt)
 {
 	int err;
 
-	if(dt->svc[0] == '\0')
-		return ANQ_ERR_NO_SERVICE;
-
 	char *kq = crypto_get_keyquery(dt);
 	if(kq == NULL)
 		return ANQ_ERR_NO_KEYQUERY;
@@ -111,6 +108,8 @@ int crypto_validate_data(struct crypto_data *dt)
 	char *file = make_filename(pd, dt->svc);
 
 	switch(dt->op) {
+	case ANQ_OP_LIST:
+		break;
 	case ANQ_OP_ENCRYPT:
 		ask_plain_password(dt);
 
@@ -118,12 +117,19 @@ int crypto_validate_data(struct crypto_data *dt)
 			err = ANQ_ERR_NO_PASSWORD;
 			goto err;
 		}
+
+		if(dt->svc[0] == '\0')
+			return ANQ_ERR_NO_SERVICE;
+
 		break;
 	case ANQ_OP_DECRYPT:
 		if(!check_file_access(file, F_OK)) {
 			err = ANQ_ERR_DECRYPT_NO_SERVICE;
 			goto err;
 		}
+
+		if(dt->svc[0] == '\0')
+			return ANQ_ERR_NO_SERVICE;
 		break;
 	}
 

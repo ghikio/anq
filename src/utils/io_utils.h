@@ -12,6 +12,7 @@
 
 bool  check_dir_exists(char *f);
 bool  check_file_access(char* f, int mode);
+int   list_dir(char *d);
 char *make_filename(char *path, char *file);
 /* Slice argv in two parts denoted by the (del)imiter. 
  * First part go into sa and second part into sb.

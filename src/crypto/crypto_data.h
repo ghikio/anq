@@ -14,8 +14,9 @@
 /* Represent the way the program will act based
  * on user input. */
 enum op {
-	ANQ_OP_ENCRYPT = 2,
-	ANQ_OP_DECRYPT = 4,
+	ANQ_OP_LIST    = 2,
+	ANQ_OP_ENCRYPT = 4,
+	ANQ_OP_DECRYPT = 8,
 };
 
 /* Stores user input by arguments and environment vars plus
