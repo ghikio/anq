@@ -6,7 +6,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([config.h.in])
 
 AC_PROG_CC
 AC_PROG_INSTALL
