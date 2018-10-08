@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -93,22 +94,22 @@ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(am__DIST_COMMON)
+	$(am__configure_deps) $(include_HEADERS) $(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_anq_OBJECTS = src/anq-main.$(OBJEXT) \
-	src/configuration/anq-parser.$(OBJEXT) \
-	src/anq-err_codes.$(OBJEXT) src/utils/anq-io_utils.$(OBJEXT) \
+am_anq_OBJECTS = src/anq-main.$(OBJEXT) src/anq-err_codes.$(OBJEXT) \
+	src/utils/anq-io_utils.$(OBJEXT) \
 	src/crypto/anq-crypto_ops.$(OBJEXT) \
 	src/crypto/anq-crypto_data.$(OBJEXT) \
 	src/crypto/gpgme/anq-crypto.$(OBJEXT) \
+	src/configuration/anq-parser.$(OBJEXT) \
 	src/configuration/anq-argv_parser.$(OBJEXT) \
 	src/configuration/anq-config_parser.$(OBJEXT)
 anq_OBJECTS = $(am_anq_OBJECTS)
@@ -163,6 +164,34 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+HEADERS = $(include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -306,13 +335,22 @@ anq_CPPFLAGS = -Isrc/ \
 	       -Isrc/configuration/ \
 	       $(GPGME_CFLAGS)
 
+include_HEADERS = src/err_codes.h \
+		  src/utils/io_utils.h \
+		  src/crypto/crypto_ops.h \
+		  src/crypto/crypto_data.h \
+		  src/crypto/gpgme/crypto.h \
+		  src/configuration/parser.h \
+		  src/configuration/argv_parser.h \
+		  src/configuration/config_parser.h
+
 anq_SOURCES = src/main.c \
-	       src/configuration/parser.c \
 	       src/err_codes.c \
 	       src/utils/io_utils.c \
 	       src/crypto/crypto_ops.c \
 	       src/crypto/crypto_data.c \
 	       src/crypto/gpgme/crypto.c \
+	       src/configuration/parser.c \
 	       src/configuration/argv_parser.c \
 	       src/configuration/config_parser.c
 
@@ -419,15 +457,6 @@ src/$(DEPDIR)/$(am__dirstamp):
 	@: > src/$(DEPDIR)/$(am__dirstamp)
 src/anq-main.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
-src/configuration/$(am__dirstamp):
-	@$(MKDIR_P) src/configuration
-	@: > src/configuration/$(am__dirstamp)
-src/configuration/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) src/configuration/$(DEPDIR)
-	@: > src/configuration/$(DEPDIR)/$(am__dirstamp)
-src/configuration/anq-parser.$(OBJEXT):  \
-	src/configuration/$(am__dirstamp) \
-	src/configuration/$(DEPDIR)/$(am__dirstamp)
 src/anq-err_codes.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/utils/$(am__dirstamp):
@@ -457,6 +486,15 @@ src/crypto/gpgme/$(DEPDIR)/$(am__dirstamp):
 src/crypto/gpgme/anq-crypto.$(OBJEXT):  \
 	src/crypto/gpgme/$(am__dirstamp) \
 	src/crypto/gpgme/$(DEPDIR)/$(am__dirstamp)
+src/configuration/$(am__dirstamp):
+	@$(MKDIR_P) src/configuration
+	@: > src/configuration/$(am__dirstamp)
+src/configuration/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) src/configuration/$(DEPDIR)
+	@: > src/configuration/$(DEPDIR)/$(am__dirstamp)
+src/configuration/anq-parser.$(OBJEXT):  \
+	src/configuration/$(am__dirstamp) \
+	src/configuration/$(DEPDIR)/$(am__dirstamp)
 src/configuration/anq-argv_parser.$(OBJEXT):  \
 	src/configuration/$(am__dirstamp) \
 	src/configuration/$(DEPDIR)/$(am__dirstamp)
@@ -524,20 +562,6 @@ src/anq-main.obj: src/main.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/main.c' object='src/anq-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/anq-main.obj `if test -f 'src/main.c'; then $(CYGPATH_W) 'src/main.c'; else $(CYGPATH_W) '$(srcdir)/src/main.c'; fi`
-
-src/configuration/anq-parser.o: src/configuration/parser.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/configuration/anq-parser.o -MD -MP -MF src/configuration/$(DEPDIR)/anq-parser.Tpo -c -o src/configuration/anq-parser.o `test -f 'src/configuration/parser.c' || echo '$(srcdir)/'`src/configuration/parser.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/configuration/$(DEPDIR)/anq-parser.Tpo src/configuration/$(DEPDIR)/anq-parser.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/configuration/parser.c' object='src/configuration/anq-parser.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/configuration/anq-parser.o `test -f 'src/configuration/parser.c' || echo '$(srcdir)/'`src/configuration/parser.c
-
-src/configuration/anq-parser.obj: src/configuration/parser.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/configuration/anq-parser.obj -MD -MP -MF src/configuration/$(DEPDIR)/anq-parser.Tpo -c -o src/configuration/anq-parser.obj `if test -f 'src/configuration/parser.c'; then $(CYGPATH_W) 'src/configuration/parser.c'; else $(CYGPATH_W) '$(srcdir)/src/configuration/parser.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/configuration/$(DEPDIR)/anq-parser.Tpo src/configuration/$(DEPDIR)/anq-parser.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/configuration/parser.c' object='src/configuration/anq-parser.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/configuration/anq-parser.obj `if test -f 'src/configuration/parser.c'; then $(CYGPATH_W) 'src/configuration/parser.c'; else $(CYGPATH_W) '$(srcdir)/src/configuration/parser.c'; fi`
 
 src/anq-err_codes.o: src/err_codes.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/anq-err_codes.o -MD -MP -MF src/$(DEPDIR)/anq-err_codes.Tpo -c -o src/anq-err_codes.o `test -f 'src/err_codes.c' || echo '$(srcdir)/'`src/err_codes.c
@@ -609,6 +633,20 @@ src/crypto/gpgme/anq-crypto.obj: src/crypto/gpgme/crypto.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/crypto/gpgme/anq-crypto.obj `if test -f 'src/crypto/gpgme/crypto.c'; then $(CYGPATH_W) 'src/crypto/gpgme/crypto.c'; else $(CYGPATH_W) '$(srcdir)/src/crypto/gpgme/crypto.c'; fi`
 
+src/configuration/anq-parser.o: src/configuration/parser.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/configuration/anq-parser.o -MD -MP -MF src/configuration/$(DEPDIR)/anq-parser.Tpo -c -o src/configuration/anq-parser.o `test -f 'src/configuration/parser.c' || echo '$(srcdir)/'`src/configuration/parser.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/configuration/$(DEPDIR)/anq-parser.Tpo src/configuration/$(DEPDIR)/anq-parser.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/configuration/parser.c' object='src/configuration/anq-parser.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/configuration/anq-parser.o `test -f 'src/configuration/parser.c' || echo '$(srcdir)/'`src/configuration/parser.c
+
+src/configuration/anq-parser.obj: src/configuration/parser.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/configuration/anq-parser.obj -MD -MP -MF src/configuration/$(DEPDIR)/anq-parser.Tpo -c -o src/configuration/anq-parser.obj `if test -f 'src/configuration/parser.c'; then $(CYGPATH_W) 'src/configuration/parser.c'; else $(CYGPATH_W) '$(srcdir)/src/configuration/parser.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/configuration/$(DEPDIR)/anq-parser.Tpo src/configuration/$(DEPDIR)/anq-parser.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/configuration/parser.c' object='src/configuration/anq-parser.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/configuration/anq-parser.obj `if test -f 'src/configuration/parser.c'; then $(CYGPATH_W) 'src/configuration/parser.c'; else $(CYGPATH_W) '$(srcdir)/src/configuration/parser.c'; fi`
+
 src/configuration/anq-argv_parser.o: src/configuration/argv_parser.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/configuration/anq-argv_parser.o -MD -MP -MF src/configuration/$(DEPDIR)/anq-argv_parser.Tpo -c -o src/configuration/anq-argv_parser.o `test -f 'src/configuration/argv_parser.c' || echo '$(srcdir)/'`src/configuration/argv_parser.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/configuration/$(DEPDIR)/anq-argv_parser.Tpo src/configuration/$(DEPDIR)/anq-argv_parser.Po
@@ -636,6 +674,27 @@ src/configuration/anq-config_parser.obj: src/configuration/config_parser.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/configuration/config_parser.c' object='src/configuration/anq-config_parser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(anq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/configuration/anq-config_parser.obj `if test -f 'src/configuration/config_parser.c'; then $(CYGPATH_W) 'src/configuration/config_parser.c'; else $(CYGPATH_W) '$(srcdir)/src/configuration/config_parser.c'; fi`
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -864,9 +923,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) config.h
+all-am: Makefile $(PROGRAMS) $(HEADERS) config.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -940,7 +999,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-includeHEADERS
 
 install-dvi: install-dvi-am
 
@@ -995,7 +1054,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS
 
 .MAKE: all install-am install-strip
 
@@ -1008,13 +1067,14 @@ uninstall-am: uninstall-binPROGRAMS
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS
+	install-exec-am install-html install-html-am \
+	install-includeHEADERS install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-includeHEADERS
 
 .PRECIOUS: Makefile
 
