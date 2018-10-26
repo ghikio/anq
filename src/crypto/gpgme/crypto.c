@@ -19,6 +19,8 @@
 
 #define GPGME_REQUIRED_VERSION "1.11.1"
 
+extern void die(int err);
+
 gpgme_ctx_t	    ctx;
 gpgme_engine_info_t eng;
 gpgme_key_t	    keys[2] = { NULL, NULL };
@@ -53,28 +55,27 @@ int anq_gpgme_init(struct crypto_data *dt)
 		return ANQ_ERR_NO_OPENGPG_PROTOCOL;
 
 	if((err = gpgme_get_engine_info(&eng)) 
-			!= GPG_ERR_NO_ERROR) {
-		return ANQ_ERR_UNALLOCATED_MEMORY;
-	}
+			!= GPG_ERR_NO_ERROR)
+		die(ANQ_ERR_UNALLOCATED_MEMORY);
 
 	if((err = gpgme_new(&ctx)) != GPG_ERR_NO_ERROR) {
 		assert(err != GPG_ERR_INV_VALUE);
 		assert(err != GPG_ERR_NOT_OPERATIONAL);
 		assert(err != GPG_ERR_SELFTEST_FAILED);
 
-		return ANQ_ERR_UNALLOCATED_MEMORY;
+		die(ANQ_ERR_UNALLOCATED_MEMORY);
 	}
 
 	if((err = gpgme_set_protocol(ctx, GPGME_PROTOCOL_OpenPGP))
 			!= GPG_ERR_NO_ERROR) {
 		assert(err != GPG_ERR_INV_VALUE);
-		return ANQ_ERR_UNALLOCATED_MEMORY;
+		die(ANQ_ERR_UNALLOCATED_MEMORY);
 	}
 
 	if((err = gpgme_ctx_set_engine_info(ctx, GPGME_PROTOCOL_OpenPGP,
 					    eng->file_name, eng->home_dir))
 			!= GPG_ERR_NO_ERROR)
-		return ANQ_ERR_UNALLOCATED_MEMORY;
+		die(ANQ_ERR_UNALLOCATED_MEMORY);
 
 	if((err = anq_gpgme_setkey(dt)) != 0)
 		return err;
@@ -150,6 +151,13 @@ mem_err:
 	return err;
 }
 
+/*
+ * TODO [criw mp] Evaluate if program can die() safely in here
+ *
+ * Instead of doing err = ANQ_ERR_UNALLOCATED_MEMORY and goto,
+ * change to die(ANQ_ERR_UNALLOCATED_MEMORY) if no security
+ * issues are found.
+ */
 int anq_gpgme_encrypt(struct crypto_data *dt)
 {
 	char *plain = crypto_get_plain(dt);

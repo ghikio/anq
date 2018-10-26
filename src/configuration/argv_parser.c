@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+extern void   die(int err);
 extern struct crypto_data dt;
 
 int set_arg(char *arg, char *val);
@@ -24,17 +25,13 @@ int parse_argv(int argc, char *argv[])
 	int  err;
 	char *arga = calloc(INPUT_SIZE + 1, sizeof(char));
 
-	if(!arga) {
-		err = ANQ_ERR_UNALLOCATED_MEMORY;
-		goto arga_err;
-	}
+	if(!arga)
+		die(ANQ_ERR_UNALLOCATED_MEMORY);
 
 	char *argb = calloc(INPUT_SIZE + 1, sizeof(char));
 
-	if(!argb) {
-		err = ANQ_ERR_UNALLOCATED_MEMORY;
-		goto argb_err;
-	}
+	if(!argb)
+		die(ANQ_ERR_UNALLOCATED_MEMORY);
 
 	if(argc == 1)
 		set_arg("-h", NULL);
@@ -55,9 +52,7 @@ int parse_argv(int argc, char *argv[])
 
 del_err:
 	free(argb);
-argb_err:
 	free(arga);
-arga_err:
 	return err;
 }
 

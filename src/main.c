@@ -17,6 +17,8 @@
 struct crypto_data dt;
 struct crypto_ops  op;
 
+void die(int err);
+
 int main(int argc, char *argv[])
 {
 	int err;
@@ -33,6 +35,12 @@ int main(int argc, char *argv[])
 	return 0;
 
 err:
-	print_err_str(err);
-	return err;
+	die(err);
+}
+
+
+void die(int err)
+{
+	printe(err);
+	exit(err);
 }

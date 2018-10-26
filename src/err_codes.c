@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void print_err_str(int err)
+void printe(int err)
 {
 	char *str = err_to_str(err);
 	fputs(str, stderr);

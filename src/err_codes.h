@@ -54,6 +54,6 @@ enum anq_err_codes {
 };
 
 char *err_to_str(int err);
-void  print_err_str(int err);
+void  printe(int err);
 
 #endif
