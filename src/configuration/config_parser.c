@@ -96,7 +96,7 @@ char *get_config_file(void)
 	if(!cffile)
 		goto ncffile_err;
 
-	if(!check_file_access(cffile, X_OK)) {
+	if(!check_file_access(cffile, R_OK)) {
 		goto xacc_err;
 	}
 
