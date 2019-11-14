@@ -44,8 +44,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct crypto_data dt;
-struct crypto_ops  op;
+struct crypto_data anq_crypto_data;
+struct crypto_ops  anq_crypto_op;
 
 void die(int err);
 
@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
 	err = parse(argc, argv);
 	if(err)
 		goto err;
-	err = crypto_validate_data(&dt);
+	err = crypto_validate_data(&anq_crypto_data);
 	if(err)
 		goto err;
 
-	err = start_ops(&op, &dt);
+	err = start_ops(&anq_crypto_op, &anq_crypto_data);
 
 	return 0;
 

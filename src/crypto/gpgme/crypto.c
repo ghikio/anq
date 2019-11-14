@@ -50,9 +50,9 @@
 
 extern void die(int err);
 
-gpgme_ctx_t	    ctx;
-gpgme_engine_info_t eng;
-gpgme_key_t	    keys[2] = { NULL, NULL };
+gpgme_ctx_t anq_crypto_gpgme_ctx;
+gpgme_engine_info_t anq_crypto_gpgme_eng;
+gpgme_key_t keys[2] = { NULL, NULL };
 
 int anq_gpgme_setkey(struct crypto_data *dt);
 
@@ -83,11 +83,11 @@ int anq_gpgme_init(struct crypto_data *dt)
 			!= GPG_ERR_NO_ERROR)
 		return ANQ_ERR_NO_OPENGPG_PROTOCOL;
 
-	if((err = gpgme_get_engine_info(&eng)) 
+	if((err = gpgme_get_engine_info(&anq_crypto_gpgme_eng)) 
 			!= GPG_ERR_NO_ERROR)
 		die(ANQ_ERR_UNALLOCATED_MEMORY);
 
-	if((err = gpgme_new(&ctx)) != GPG_ERR_NO_ERROR) {
+	if((err = gpgme_new(&anq_crypto_gpgme_ctx)) != GPG_ERR_NO_ERROR) {
 		assert(err != GPG_ERR_INV_VALUE);
 		assert(err != GPG_ERR_NOT_OPERATIONAL);
 		assert(err != GPG_ERR_SELFTEST_FAILED);
@@ -95,14 +95,14 @@ int anq_gpgme_init(struct crypto_data *dt)
 		die(ANQ_ERR_UNALLOCATED_MEMORY);
 	}
 
-	if((err = gpgme_set_protocol(ctx, GPGME_PROTOCOL_OpenPGP))
+	if((err = gpgme_set_protocol(anq_crypto_gpgme_ctx, GPGME_PROTOCOL_OpenPGP))
 			!= GPG_ERR_NO_ERROR) {
 		assert(err != GPG_ERR_INV_VALUE);
 		die(ANQ_ERR_UNALLOCATED_MEMORY);
 	}
 
-	if((err = gpgme_ctx_set_engine_info(ctx, GPGME_PROTOCOL_OpenPGP,
-					    eng->file_name, eng->home_dir))
+	if((err = gpgme_ctx_set_engine_info(anq_crypto_gpgme_ctx, GPGME_PROTOCOL_OpenPGP,
+					    anq_crypto_gpgme_eng->file_name, anq_crypto_gpgme_eng->home_dir))
 			!= GPG_ERR_NO_ERROR)
 		die(ANQ_ERR_UNALLOCATED_MEMORY);
 
@@ -114,7 +114,7 @@ int anq_gpgme_init(struct crypto_data *dt)
 
 int anq_gpgme_exit(struct crypto_data *dt)
 {
-	gpgme_release(ctx);
+	gpgme_release(anq_crypto_gpgme_ctx);
 	return 0;
 }
 
@@ -122,14 +122,14 @@ int anq_gpgme_setkey(struct crypto_data *dt)
 {
 	char *query = crypto_get_keyquery(dt);
 
-	assert(ctx   != NULL);
+	assert(anq_crypto_gpgme_ctx != NULL);
 	assert(query != NULL);
 
 	gpgme_error_t err = 0;
 
-	err = gpgme_op_keylist_start(ctx, query, 0);
+	err = gpgme_op_keylist_start(anq_crypto_gpgme_ctx, query, 0);
 
-	if((err = gpgme_op_keylist_next(ctx, &keys[0]))
+	if((err = gpgme_op_keylist_next(anq_crypto_gpgme_ctx, &keys[0]))
 			!= GPG_ERR_NO_ERROR) {
 		if(!keys[0]->uids || !keys[0]->uids->name)
 			goto not_found;
@@ -191,7 +191,7 @@ int anq_gpgme_encrypt(struct crypto_data *dt)
 {
 	char *plain = crypto_get_plain(dt);
 
-	assert(ctx != NULL);
+	assert(anq_crypto_gpgme_ctx != NULL);
 	assert(plain != NULL);
 	assert(keys[0] != NULL && keys[1] == NULL);
 
@@ -201,7 +201,7 @@ int anq_gpgme_encrypt(struct crypto_data *dt)
 
 	/* gpgme_data_t stores and delivers the kind of data
 	 * that must be exchanged between the user and the
-	 * crypto engine. */
+	 * crypto anq_crypto_gpgme_engine. */
 	if((err = gpgme_data_new_from_mem(&src, plain,
 					  strlen(plain), 1))
 			!= GPG_ERR_NO_ERROR) {
@@ -218,7 +218,7 @@ int anq_gpgme_encrypt(struct crypto_data *dt)
 		goto dst_mem_err;
 	}
 
-	if((err = gpgme_op_encrypt(ctx, keys,
+	if((err = gpgme_op_encrypt(anq_crypto_gpgme_ctx, keys,
 				   GPGME_ENCRYPT_NO_ENCRYPT_TO,
 				   src, dst))
 			!= GPG_ERR_NO_ERROR) {
@@ -253,7 +253,7 @@ src_mem_err:
 
 int anq_gpgme_decrypt(struct crypto_data *dt)
 {
-	assert(ctx != NULL);
+	assert(anq_crypto_gpgme_ctx != NULL);
 
 	gpgme_error_t err = 0;
 	char *passd = crypto_get_passdir(dt);
@@ -279,7 +279,7 @@ int anq_gpgme_decrypt(struct crypto_data *dt)
 		goto dst_mem_err;
 	}
 
-	if((err = gpgme_op_decrypt(ctx, src, dst)) 
+	if((err = gpgme_op_decrypt(anq_crypto_gpgme_ctx, src, dst)) 
 			!= GPG_ERR_NO_ERROR) {
 		assert(err != GPG_ERR_INV_VALUE);
 

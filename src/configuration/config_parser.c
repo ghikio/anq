@@ -51,7 +51,7 @@
 /* Readable configuration file at CONFIG_DIR_NAME. */
 #define CONFIG_FILE_NAME "config"
 
-extern struct crypto_data dt;
+extern struct crypto_data anq_crypto_data;
 
 /* If opt is valid, set val in the associated crypto_data
  * field. Otherwise does nothing. */
@@ -75,7 +75,7 @@ int parse_config()
 	char opt[INPUT_SIZE];
 	char val[INPUT_SIZE];
 
-	while(fgets(buf, sizeof(buf) + 1, fp)) {
+	while(fgets(buf, sizeof(buf), fp)) {
 		slice_argv(buf, '=', opt, val);
 		if(opt[0] == '\0' || val[0] == '\0')
 			goto conf_err;
@@ -104,10 +104,10 @@ void set_option(char *opt, char *val)
 
 	if((err = strncmp(opt, "ANQ_KEY_NAME", INPUT_SIZE))
 			== 0)
-		crypto_set_keyquery(&dt, val);
+		crypto_set_keyquery(&anq_crypto_data, val);
 	else if((err = strncmp(opt, "ANQ_PASSPATH", INPUT_SIZE))
 			== 0)
-		crypto_set_passdir(&dt, val);
+		crypto_set_passdir(&anq_crypto_data, val);
 }
 
 char *get_config_file(void)

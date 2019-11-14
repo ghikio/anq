@@ -44,7 +44,7 @@
 #include <stdlib.h>
 
 extern void   die(int err);
-extern struct crypto_data dt;
+extern struct crypto_data anq_crypto_data;
 
 int set_arg(char *arg, char *val);
 /* Check each argument for a defined one in argv_handler and if found
@@ -100,16 +100,16 @@ del_err:
 int set_arg(char *arg, char *val)
 {
 	if(strncmp(arg, "-l", INPUT_SIZE) == 0) {
-		crypto_set_operation(&dt, ANQ_OP_LIST);
+		crypto_set_operation(&anq_crypto_data, ANQ_OP_LIST);
 	} else if(strncmp(arg, "-d", INPUT_SIZE) == 0) {
-		crypto_set_operation(&dt, ANQ_OP_DECRYPT);
+		crypto_set_operation(&anq_crypto_data, ANQ_OP_DECRYPT);
 	} else if(strncmp(arg, "-e", INPUT_SIZE) == 0) {
-		crypto_set_operation(&dt, ANQ_OP_ENCRYPT);
+		crypto_set_operation(&anq_crypto_data, ANQ_OP_ENCRYPT);
 	} else if(strncmp(arg, "-s", INPUT_SIZE) == 0) {
 		if(val[0] == '\0')
 			return ANQ_ERR_NO_SERVICE_VALUE;
 
-		crypto_set_service(&dt, val);
+		crypto_set_service(&anq_crypto_data, val);
 	} else if(strncmp(arg, "-v", INPUT_SIZE) == 0) {
 		printf("version: %s\n", VERSION);
 		return ANQ_ERR_HELP_MENU;
