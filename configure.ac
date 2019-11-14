@@ -1,7 +1,7 @@
 AC_PREREQ([2.64])
 AC_CONFIG_AUX_DIR([build-aux])
 
-AC_INIT([anq], [0.0.1], [contact@thecriw.com])
+AC_INIT([anq], [0.0.1], [me@ghikio.dev])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 AC_CONFIG_FILES([Makefile])
